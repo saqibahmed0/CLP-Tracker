@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CLP Mixture Classifier — EU Compliant 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#15171C; --paper:#EEF0F4; --card:#FBFCFD; --panel:#171A21; --panel2:#1F232D;
+  --line:#D6DBE3; --muted:#5C6473; --red:#D72638; --redsoft:#FBE7E9;
+  --amber:#B97309; --ambersoft:#FBF0DC; --teal:#0E7C7B; --tealsoft:#E1F0EF; --ok:#2C7A4B;
+  --disp:'Space Grotesk',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box} html,body{margin:0}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer} input,select{font-family:inherit}
+.wrap{max-width:1280px;margin:0 auto;padding:24px 20px 80px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:6px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--red);font-weight:600}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(26px,4vw,40px);letter-spacing:-.02em;margin:6px 0 2px}
+.sub{color:var(--muted);font-size:14px;max-width:52ch}
+.reg{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;line-height:1.7}
+.tabs{display:flex;gap:4px;margin:22px 0 18px}
+.tab{border:1px solid var(--line);background:var(--card);padding:9px 16px;font-weight:600;font-size:14px;border-radius:10px;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+@media(max-width:920px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.card h2{font-family:var(--disp);font-size:15px;letter-spacing:.01em;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+.card .hint{color:var(--muted);font-size:12.5px;margin:0 0 16px}
+.tag{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;padding:2px 7px;border-radius:6px;background:var(--tealsoft);color:var(--teal);text-transform:uppercase}
+.tag.new{background:var(--redsoft);color:var(--red)}
+.addrow{display:grid;grid-template-columns:1fr 92px auto;gap:8px;margin-bottom:14px}
+.addrow input,.addrow select{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:9px;font-size:14px;background:#fff}
+.addrow .pct{text-align:right;font-family:var(--mono)}
+.btn{border:1px solid var(--ink);background:var(--ink);color:#fff;border-radius:9px;padding:0 14px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px}
+.btn:hover{opacity:.92}
+.btn.ghost{background:#fff;color:var(--ink)} .btn.ghost:hover{background:var(--paper)}
+.btn.sm{padding:7px 11px;font-size:12.5px;border-radius:8px;min-height:34px}
+.btn.outline{border:1px solid var(--line);background:#fff;color:var(--muted)}
+.btn.outline:hover{border-color:var(--ink);color:var(--ink)}
+.flist{display:flex;flex-direction:column;gap:7px}
+.frow{display:grid;grid-template-columns:1fr 84px 30px;gap:8px;align-items:center;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.frow .nm{font-weight:500;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frow .nm small{display:block;color:var(--muted);font-family:var(--mono);font-size:10.5px;font-weight:400}
+.frow .pe{border:1px solid var(--line);border-radius:7px;padding:6px 8px;text-align:right;font-family:var(--mono);font-size:13px;width:100%}
+.frow .x{border:none;background:transparent;color:var(--muted);font-size:18px;line-height:1;padding:2px}
+.frow .x:hover{color:var(--red)}
+.totalrow{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);font-family:var(--mono);font-size:13px}
+.totalrow .v{font-weight:600} .totalrow .over{color:var(--red)}
+.empty{color:var(--muted);font-size:13.5px;text-align:center;padding:22px 8px;border:1px dashed var(--line);border-radius:10px}
+.readout{background:var(--panel);color:#EBEDF2;border:1px solid #2A2F3A;border-radius:16px;overflow:hidden}
+.readout .rhead{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #2A2F3A}
+.readout .rhead .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#8B93A4}
+.readout .rbody{padding:20px 18px}
+.signal{display:inline-block;font-family:var(--disp);font-weight:700;font-size:22px;letter-spacing:.02em;padding:4px 14px;border-radius:8px}
+.signal small{font-weight:500;font-size:13px;opacity:.7}
+.signal.danger{background:var(--red);color:#fff} .signal.warning{background:#E8A33D;color:#241a05}
+.signal.none{background:#2A2F3A;color:#9aa3b4;font-size:15px;font-weight:600}
+.pictos{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 4px}
+.picto{width:60px;height:60px}
+.section-t{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#8B93A4;margin:18px 0 8px}
+.hline{display:flex;gap:9px;align-items:baseline;padding:6px 0;border-bottom:1px solid #23272f}
+.hline:last-child{border-bottom:none}
+.hcode{font-family:var(--mono);font-size:12.5px;font-weight:600;color:#fff;min-width:52px}
+.htext{font-size:13px;color:#C9CFDA}
+.euh .hcode{color:#E8A33D}
+.pchips{display:flex;flex-wrap:wrap;gap:6px}
+.pchip{font-family:var(--mono);font-size:11px;color:#C9CFDA;background:#23272f;border-radius:6px;padding:3px 8px}
+.flag{display:flex;gap:8px;background:#2a2410;border:1px solid #4a3d12;color:#f0d99a;border-radius:9px;padding:10px 12px;font-size:12.5px;margin-top:12px}
+.flag.info{background:#0f2430;border-color:#16435a;color:#9fd2e8}
+.flag.success{background:#0f3018;border-color:#1a5c2e;color:#7ed99a}
+.flag b{color:#ffe8b0}
+.pname{width:100%;background:#11141a;border:1px solid #2A2F3A;color:#fff;border-radius:8px;padding:9px 11px;font-size:14px;font-family:var(--disp);font-weight:500;margin-bottom:2px}
+.pname::placeholder{color:#6d7787}
+.deriv{margin-top:16px}
+.deriv summary{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8B93A4;cursor:pointer;padding:6px 0}
+.deriv summary:hover{color:#cfd5e0}
+.ditem{font-size:12.5px;color:#aeb6c4;padding:7px 0;border-top:1px solid #23272f;line-height:1.55}
+.ditem b{color:#fff;font-family:var(--mono);font-weight:600}
+.dcalc{font-family:var(--mono);color:#8fb9b8;font-size:11.5px}
+.libtools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.search{flex:1;min-width:160px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-size:14px;background:#fff}
+.libtable{width:100%;border-collapse:collapse}
+.libtable th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line)}
+.libtable td{padding:11px 10px;border-bottom:1px solid var(--line);font-size:13.5px;vertical-align:top}
+.libtable tr:hover td{background:#fff}
+.cname{font-weight:600} .cname small{display:block;font-weight:400;color:var(--muted);font-size:11.5px;margin-top:2px}
+.hz{display:flex;flex-wrap:wrap;gap:5px}
+.hzchip{font-family:var(--mono);font-size:10.5px;font-weight:500;padding:2px 7px;border-radius:6px;background:var(--paper);border:1px solid var(--line);color:var(--ink)}
+.hzchip.d{background:var(--redsoft);border-color:#f3c6cb;color:#9e1622}
+.hzchip.w{background:var(--ambersoft);border-color:#ecd9ab;color:#7d4f06}
+.hzchip.env{background:#e3f0e7;border-color:#bcdcc6;color:#1f5d38}
+.hzchip.new{background:#f0e8ff;border-color:#d4c5f0;color:#5a3d8a}
+.alg{font-size:11.5px;font-weight:600}
+.alg.y{color:var(--amber)} .alg.n{color:var(--ok)} .alg.x{color:var(--muted)}
+.mlink{font-family:var(--mono);font-size:11px;color:var(--teal);text-decoration:none} .mlink:hover{text-decoration:underline}
+.rowact{display:flex;gap:6px;justify-content:flex-end}
+.iconbtn{border:1px solid var(--line);background:#fff;border-radius:7px;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)}
+.iconbtn:hover{border-color:var(--ink);color:var(--ink)}
+.iconbtn.del:hover{border-color:var(--red);color:var(--red)}
+.scrim{position:fixed;inset:0;background:rgba(15,17,22,.55);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:50;overflow:auto}
+.scrim.open{display:flex}
+.modal{background:var(--card);border-radius:16px;max-width:700px;width:100%;padding:22px}
+.modal h3{font-family:var(--disp);margin:0 0 4px;font-size:18px}
+.modal .mh{color:var(--muted);font-size:12.5px;margin:0 0 16px}
+.srcrow{display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap}
+.srcrow .btn{flex:1;min-width:120px}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px;letter-spacing:.02em}
+.field input,.field select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-size:14px;background:#fff}
+.field.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.hzedit{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;min-height:8px}
+.hzedit .hzchip{cursor:default;display:inline-flex;align-items:center;gap:6px}
+.hzedit .hzchip button{border:none;background:none;color:inherit;font-size:13px;line-height:1;padding:0;cursor:pointer;opacity:.6}
+.hzedit .hzchip button:hover{opacity:1}
+.hzadd{display:grid;grid-template-columns:1fr auto;gap:8px}
+.modal .mfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.fetchbox{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+.fetchbox .fb-row{display:grid;grid-template-columns:1fr auto;gap:8px}
+.fetchbox input{padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-size:14px;background:#fff;width:100%}
+.fetchstatus{font-size:12.5px;margin-top:10px;min-height:18px}
+.fetchstatus.ok{color:var(--ok)} .fetchstatus.err{color:var(--red)} .fetchstatus.wait{color:var(--muted)}
+.drop{border:1.5px dashed var(--line);border-radius:10px;padding:22px;text-align:center;color:var(--muted);font-size:13px;cursor:pointer;background:#fff}
+.drop:hover,.drop.over{border-color:var(--teal);color:var(--teal);background:var(--tealsoft)}
+.note{font-size:11.5px;color:var(--muted);margin-top:18px;line-height:1.6;border-top:1px solid var(--line);padding-top:14px}
+.sds-tabs{display:flex;gap:4px;margin-bottom:10px}
+.sds-tab{border:1px solid var(--line);background:var(--paper);padding:6px 13px;font-size:12.5px;font-weight:600;border-radius:8px;color:var(--muted)}
+.sds-tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.sds-progress{margin-top:10px;display:flex;align-items:center;gap:10px}
+.sds-bar{flex:1;height:6px;background:var(--line);border-radius:4px;overflow:hidden}
+.sds-bar div{height:100%;background:var(--teal);border-radius:4px;transition:width .4s;width:0%}
+#sdsProgressText{font-size:12px;color:var(--muted);white-space:nowrap;min-width:120px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:10px;font-size:13.5px;opacity:0;transition:.25s;pointer-events:none;z-index:99;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.hidden{display:none!important}
+.compact{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
+.compact input{width:16px;height:16px}
+.batch-actions{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.web-sources{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.web-src{border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;cursor:pointer;background:#fff}
+.web-src:hover{border-color:var(--teal);background:var(--tealsoft)}
+.web-src .src-name{font-weight:600;font-size:12.5px;margin-bottom:3px}
+.web-src .src-desc{font-size:11px;color:var(--muted)}
+.web-src .src-status{font-size:10px;margin-top:6px;font-family:var(--mono)}
+.web-src .src-status.ok{color:var(--ok)} .web-src .src-status.err{color:var(--red)} .web-src .src-status.wait{color:var(--amber)}
+.new-badge{font-size:9px;background:var(--red);color:#fff;padding:1px 5px;border-radius:4px;font-family:var(--mono);margin-left:4px;vertical-align:middle}
+.api-key-banner{background:linear-gradient(135deg,var(--tealsoft) 0%,#e8f4f4 100%);border:1px solid var(--teal);border-radius:10px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start}
+.api-key-banner .icon{font-size:22px}
+.api-key-banner .content{flex:1}
+.api-key-banner .content h4{margin:0 0 4px;font-size:14px;color:var(--teal)}
+.api-key-banner .content p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.5}
+.api-key-banner .content .btn{margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">CLP Mixture Classifier <span class="new-badge">2026</span></div>
+      <h1>Formula → Hazard Label</h1>
+      <p class="sub">Build a formula from your ingredient database. The engine applies CLP Regulation (EC) 1272/2008 + Delegated Regulation (EU) 2023/707 — including new hazard classes: Endocrine Disruptors, PBT/vPvB, PMT/vPvM.</p>
+    </div>
+    <div class="reg">REGULATION (EC) 1272/2008<br>+ REGULATION (EU) 2023/707<br>HEALTH + ENVIRONMENTAL<br><span id="libcount"></span> ingredients</div>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" id="tab-classify">Classify</button>
+    <button class="tab" role="tab" aria-selected="false" id="tab-library">Ingredient library</button>
+  </div>
+
+  <section id="view-classify">
+    <div class="grid">
+      <div class="card">
+        <h2>Formula</h2>
+        <p class="hint">Add each ingredient and its concentration as % w/w of the finished product. Active content factor is applied automatically.</p>
+        <div class="addrow">
+          <select id="ingSelect"><option value="">Select an ingredient…</option></select>
+          <input id="ingPct" class="pct" type="number" min="0" max="100" step="0.01" placeholder="% w/w"/>
+          <button class="btn" id="addBtn">Add</button>
+        </div>
+        <div class="flist" id="flist"></div>
+        <div class="empty" id="fempty">No ingredients yet. Add components above to classify.</div>
+        <div class="totalrow"><span>Total declared</span><span class="v" id="ftotal">0.00 %</span></div>
+        <div class="compact" style="margin-top:8px"><input type="checkbox" id="showDeriv" checked/><label for="showDeriv" style="margin:0;font-size:12px;color:var(--muted);font-weight:400">Show classification derivation</label></div>
+      </div>
+      <div class="readout">
+        <div class="rhead"><span class="lbl">Label preview</span><span class="lbl" id="rstatus">—</span></div>
+        <div class="rbody">
+          <input class="pname" id="pname" placeholder="Product name (optional)"/>
+          <div id="resultArea"><p style="color:#8B93A4;font-size:13.5px;margin:18px 0 6px">Add ingredients to generate a classification.</p></div>
+        </div>
+      </div>
+    </div>
+    <p class="note"><b>Scope &amp; disclaimer.</b> This tool implements the CLP calculation/summation methods for health &amp; environmental hazards (ATEmix additivity; generic concentration limits for skin/eye/STOT; M-factor summation for aquatic). <b>Physical hazards</b> (flammable, oxidising, corrosive-to-metals) cannot be derived from composition alone and are flagged for testing. <b>New hazard classes</b> (ED, PBT/vPvB, PMT/vPvM) from Regulation (EU) 2023/707 are included with mandatory mixture thresholds (May 2026). SDS import and web lookup extract H-codes automatically — always review against the source SDS / ECHA C&amp;L Inventory. Not a substitute for a qualified safety assessor.</p>
+  </section>
+
+  <section id="view-library" class="hidden">
+    <div class="card">
+      <h2>Ingredient library <span class="tag">editable</span></h2>
+      <p class="hint">Seeded from your CLP database. Add ingredients manually, from an uploaded SDS (PDF), or by web lookup — each opens a review step before saving.</p>
+      <div class="batch-actions">
+        <input class="search" id="libSearch" placeholder="Search by name or CAS…"/>
+        <button class="btn" id="newManual">+ Manual</button>
+        <button class="btn ghost" id="newSDS">From SDS</button>
+        <button class="btn ghost" id="newWeb">From web</button>
+        <button class="btn outline" id="exportBtn">Export</button>
+        <button class="btn outline" id="importBtn">Import</button>
+        <input type="file" id="importFile" accept="application/json,.json" class="hidden"/>
+      </div>
+      <table class="libtable">
+        <thead><tr><th style="width:30%">Ingredient</th><th>CLP classification</th><th style="width:10%">Allergen</th><th style="width:8%">SCL</th><th style="width:8%">SDS</th><th style="width:70px"></th></tr></thead>
+        <tbody id="libBody"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- modal -->
+<div class="scrim" id="scrim">
+  <div class="modal">
+    <h3 id="mTitle">New ingredient</h3>
+    <p class="mh" id="mHelp">Pick hazards from the list — categories and H-codes are pre-set.</p>
+
+    <!-- SDS dropzone -->
+    <div id="sdsBox" class="hidden">
+      <div class="sds-tabs">
+        <button class="sds-tab active" id="sdsTabFile">Upload PDF</button>
+        <button class="sds-tab" id="sdsTabUrl">From URL</button>
+        <button class="sds-tab" id="sdsTabAI">⚡ AI mode</button>
+      </div>
+      <div id="sdsFilePanel">
+        <div class="drop" id="dropzone">Drop SDS/MSDS PDF here, or click to choose.<br><small>Works in any language — English, Hungarian, German, French…</small></div>
+        <input type="file" id="sdsFile" accept="application/pdf,.pdf" class="hidden"/>
+      </div>
+      <div id="sdsUrlPanel" class="hidden">
+        <div class="fetchbox">
+          <div class="fb-row">
+            <input id="sdsUrl" placeholder="Paste direct PDF link (supplier MSDS URL)"/>
+            <button class="btn sm" id="sdsUrlGo">Load</button>
+          </div>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:6px">⚠ Only works for publicly accessible PDFs. SharePoint/OneDrive links → download first, then upload above.</div>
+        </div>
+      </div>
+      <div id="sdsAIPanel" class="hidden">
+        <div class="fetchbox">
+          <div class="field" style="margin-bottom:8px"><label>Anthropic API key (stored locally, never sent except to api.anthropic.com)</label>
+            <input id="aiKey" type="password" placeholder="sk-ant-…" autocomplete="off"/>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <button class="btn sm" id="aiKeySave">Save key</button>
+            <button class="btn ghost sm" id="aiKeyClear">Clear</button>
+            <span style="font-size:12px;color:var(--muted)">AI extraction handles scanned PDFs &amp; complex layouts better than pdf.js.</span>
+          </div>
+          <div class="fetchstatus" id="aiKeyStatus" style="margin-top:8px"></div>
+        </div>
+      </div>
+      <div class="sds-progress hidden" id="sdsProgress">
+        <div class="sds-bar"><div id="sdsBarFill"></div></div>
+        <span id="sdsProgressText">Reading…</span>
+      </div>
+      <div class="fetchstatus" id="sdsStatus"></div>
+    </div>
+
+    <!-- web lookup -->
+    <div id="webBox" class="hidden">
+      <div class="fetchbox">
+        <div class="fb-row">
+          <input id="webQuery" placeholder="Substance name or CAS — e.g. Citric acid, 77-92-9, Sodium percarbonate…"/>
+          <button class="btn sm" id="webGo">Look up</button>
+        </div>
+        
+        <!-- API Key Banner -->
+        <div id="apiKeyBanner" class="api-key-banner hidden">
+          <div class="icon">🔑</div>
+          <div class="content">
+            <h4>Web lookup works best with an AI API key</h4>
+            <p>Without a key, web lookup relies on public CORS proxies which are unreliable and often blocked. Save an Anthropic API key for instant, reliable lookups from any browser.</p>
+            <button class="btn sm" id="bannerAddKey">Add API key →</button>
+          </div>
+        </div>
+
+        <div class="fetchstatus" id="webStatus">Queries ECHA C&L, PubChem, and AI (if key saved) in parallel.</div>
+        <div class="web-sources" id="webSources">
+          <div class="web-src" id="srcAI">
+            <div class="src-name">🤖 AI Search</div>
+            <div class="src-desc">Multi-source (ECHA, PubChem, SDS)</div>
+            <div class="src-status wait" id="srcAIStatus">Ready</div>
+          </div>
+          <div class="web-src" id="srcPubChem">
+            <div class="src-name">🧪 PubChem</div>
+            <div class="src-desc">NCBI GHS database</div>
+            <div class="src-status wait" id="srcPubChemStatus">Ready</div>
+          </div>
+        </div>
+        <div id="webManual" class="hidden" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:7px">All automated sources failed. Open these databases manually:</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn ghost sm" id="openECHA">ECHA C&L ↗</button>
+            <button class="btn ghost sm" id="openPubChem">PubChem ↗</button>
+            <button class="btn ghost sm" id="openGESTIS">GESTIS ↗</button>
+          </div>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:10px;background:var(--paper);padding:8px;border-radius:6px">
+            <b>💡 Pro tip:</b> Save an Anthropic API key in the <b>⚡ AI mode</b> tab (SDS panel). Web lookup then works from any browser without CORS issues, and finds classifications from ECHA, PubChem, and supplier SDS databases simultaneously.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field"><label>Name</label><input id="mName" placeholder="e.g. Citric acid"/></div>
+    <div class="field three">
+      <div><label>CAS (optional)</label><input id="mCas" placeholder="77-92-9"/></div>
+      <div><label>Active content</label>
+        <select id="mActive"><option value="1">100% (as-is)</option><option value="0.7">70% (e.g. SLES)</option><option value="0.5">50% (e.g. BKC)</option><option value="0.3">30%</option><option value="custom">Custom…</option></select>
+      </div>
+      <div><label>Allergen</label>
+        <select id="mAllergen"><option value="">—</option><option>Contains allergenics</option><option>non-allergenic</option></select>
+      </div>
+    </div>
+    <div id="mActiveCustom" class="field hidden"><label>Custom active content factor (0.01–1.0)</label><input id="mActiveVal" type="number" min="0.01" max="1" step="0.01" value="1"/></div>
+    <div class="field"><label>SDS link (optional)</label><input id="mMsds" placeholder="https://…"/></div>
+    <div class="field">
+      <label>Hazard classifications</label>
+      <div class="hzedit" id="mHaz"></div>
+      <div class="hzadd">
+        <select id="mHazSelect"></select>
+        <button class="btn ghost sm" id="mHazAdd">Add hazard</button>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn ghost" id="mCancel">Cancel</button>
+      <button class="btn" id="mSave">Save ingredient</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== CLP ENGINE 2026 ===================== */
+const store=(()=>{let ok=true;try{localStorage.setItem('_t','1');localStorage.removeItem('_t');}catch(e){ok=false;}const mem={};
+  return{get:k=>{if(ok){try{return localStorage.getItem(k)}catch(e){}}return mem[k]??null;},set:(k,v)=>{if(ok){try{localStorage.setItem(k,v);return}catch(e){}}mem[k]=v;}};})();
+
+/* Hazard statements — updated 2026 with new EUH codes */
+const H={
+  H271:'May cause fire or explosion; strong oxidiser',H272:'May intensify fire; oxidiser',
+  H225:'Highly flammable liquid and vapour',H226:'Flammable liquid and vapour',H290:'May be corrosive to metals',
+  H300:'Fatal if swallowed',H301:'Toxic if swallowed',H302:'Harmful if swallowed',
+  H310:'Fatal in contact with skin',H311:'Toxic in contact with skin',H312:'Harmful in contact with skin',
+  H330:'Fatal if inhaled',H331:'Toxic if inhaled',H332:'Harmful if inhaled',
+  H314:'Causes severe skin burns and eye damage',H315:'Causes skin irritation',H318:'Causes serious eye damage',H319:'Causes serious eye irritation',
+  H317:'May cause an allergic skin reaction',H334:'May cause allergy or asthma symptoms or breathing difficulties if inhaled',
+  H340:'May cause genetic defects',H341:'Suspected of causing genetic defects',
+  H350:'May cause cancer',H351:'Suspected of causing cancer',
+  H360:'May damage fertility or the unborn child',H361:'Suspected of damaging fertility or the unborn child',H362:'May cause harm to breast-fed children',
+  H370:'Causes damage to organs',H371:'May cause damage to organs',H335:'May cause respiratory irritation',H336:'May cause drowsiness or dizziness',
+  H372:'Causes damage to organs through prolonged or repeated exposure',H373:'May cause damage to organs through prolonged or repeated exposure',
+  H304:'May be fatal if swallowed and enters airways',
+  H400:'Very toxic to aquatic life',H410:'Very toxic to aquatic life with long lasting effects',H411:'Toxic to aquatic life with long lasting effects',H412:'Harmful to aquatic life with long lasting effects',H413:'May cause long lasting harmful effects to aquatic life',
+  H420:'Harms public health and the environment by destroying ozone in the upper atmosphere',
+  EUH380:'May cause endocrine disruption in humans',EUH381:'Suspected of causing endocrine disruption in humans',
+  EUH430:'May cause endocrine disruption in the environment',EUH431:'Suspected of causing endocrine disruption in the environment',
+  EUH440:'Accumulates in the environment and living organisms including humans',EUH441:'Strongly accumulates in the environment and living organisms including humans',
+  EUH450:'Can cause long-lasting and diffuse contamination of water resources',EUH451:'Can cause very long-lasting and diffuse contamination of water resources',
+  EUH031:'Contact with acids liberates toxic gas',EUH206:'Do not use with other products. May release dangerous gases (chlorine).'
+};
+
+const Pmap={
+  H314:['P280 Wear protective gloves/eye protection','P305+P351+P338 IF IN EYES: rinse cautiously with water','P310 Immediately call a POISON CENTER/doctor'],
+  H318:['P280 Wear eye protection','P305+P351+P338 IF IN EYES: rinse cautiously with water'],
+  H315:['P302+P352 IF ON SKIN: wash with plenty of water'],
+  H319:['P305+P351+P338 IF IN EYES: rinse cautiously with water'],
+  H317:['P261 Avoid breathing dust/mist','P302+P352 IF ON SKIN: wash with plenty of water'],
+  H334:['P261 Avoid breathing dust/mist','P304+P340 IF INHALED: remove person to fresh air'],
+  H302:['P301+P312 IF SWALLOWED: call a POISON CENTER if you feel unwell'],
+  H335:['P261 Avoid breathing mist','P271 Use only in a well-ventilated area'],
+  H336:['P261 Avoid breathing vapours'],
+  H400:['P273 Avoid release to the environment'],H410:['P273 Avoid release to the environment','P391 Collect spillage'],
+  H411:['P273 Avoid release to the environment'],H412:['P273 Avoid release to the environment'],
+  EUH380:['P201 Obtain special instructions before use','P280 Wear protective gloves/eye protection','P308+P313 IF exposed or concerned: Get medical advice'],
+  EUH381:['P201 Obtain special instructions before use','P280 Wear protective gloves/eye protection','P308+P313 IF exposed or concerned: Get medical advice'],
+  EUH430:['P201 Obtain special instructions before use','P273 Avoid release to the environment','P391 Collect spillage'],
+  EUH431:['P201 Obtain special instructions before use','P273 Avoid release to the environment','P391 Collect spillage'],
+  EUH440:['P201 Obtain special instructions before use','P273 Avoid release to the environment','P391 Collect spillage'],
+  EUH441:['P201 Obtain special instructions before use','P273 Avoid release to the environment','P391 Collect spillage'],
+  EUH450:['P201 Obtain special instructions before use','P273 Avoid release to the environment','P391 Collect spillage'],
+  EUH451:['P201 Obtain special instructions before use','P273 Avoid release to the environment','P391 Collect spillage']
+};
+
+/* PRESETS — updated with all 2026 hazard classes */
+const PRESETS=[
+  ['Acute Tox. 4 — oral (H302)',{cls:'acute_oral',cat:'4',h:'H302'}],
+  ['Acute Tox. 3 — oral (H301)',{cls:'acute_oral',cat:'3',h:'H301'}],
+  ['Acute Tox. 4 — dermal (H312)',{cls:'acute_dermal',cat:'4',h:'H312'}],
+  ['Acute Tox. 4 — inhalation (H332)',{cls:'acute_inhal',cat:'4',h:'H332'}],
+  ['Skin Corr. 1A (H314)',{cls:'skin_corr',cat:'1A',h:'H314'}],
+  ['Skin Corr. 1B (H314)',{cls:'skin_corr',cat:'1B',h:'H314'}],
+  ['Skin Corr. 1C (H314)',{cls:'skin_corr',cat:'1C',h:'H314'}],
+  ['Skin Irrit. 2 (H315)',{cls:'skin_irrit',cat:'2',h:'H315'}],
+  ['Eye Dam. 1 (H318)',{cls:'eye_dam',cat:'1',h:'H318'}],
+  ['Eye Irrit. 2 (H319)',{cls:'eye_irrit',cat:'2',h:'H319'}],
+  ['Skin Sens. 1 (H317)',{cls:'skin_sens',cat:'1',h:'H317'}],
+  ['Skin Sens. 1A (H317)',{cls:'skin_sens',cat:'1A',h:'H317'}],
+  ['Skin Sens. 1B (H317)',{cls:'skin_sens',cat:'1B',h:'H317'}],
+  ['Resp. Sens. 1 (H334)',{cls:'resp_sens',cat:'1',h:'H334'}],
+  ['Carc. 1B (H350)',{cls:'carc',cat:'1B',h:'H350'}],
+  ['Carc. 2 (H351)',{cls:'carc',cat:'2',h:'H351'}],
+  ['Muta. 2 (H341)',{cls:'muta',cat:'2',h:'H341'}],
+  ['Repr. 1B (H360)',{cls:'repr',cat:'1B',h:'H360'}],
+  ['Repr. 2 (H361)',{cls:'repr',cat:'2',h:'H361'}],
+  ['Lact. (H362)',{cls:'lact',cat:'-',h:'H362'}],
+  ['STOT SE 1 (H370)',{cls:'stot_se',cat:'1',h:'H370'}],
+  ['STOT SE 2 (H371)',{cls:'stot_se',cat:'2',h:'H371'}],
+  ['STOT SE 3 — resp. irrit. (H335)',{cls:'stot_se',cat:'3r',h:'H335'}],
+  ['STOT SE 3 — narcotic (H336)',{cls:'stot_se',cat:'3n',h:'H336'}],
+  ['STOT RE 1 (H372)',{cls:'stot_re',cat:'1',h:'H372'}],
+  ['STOT RE 2 (H373)',{cls:'stot_re',cat:'2',h:'H373'}],
+  ['Asp. Tox. 1 (H304)',{cls:'asp',cat:'1',h:'H304'}],
+  ['Aquatic Acute 1 (H400)',{cls:'aquatic_acute',cat:'1',h:'H400',m:1}],
+  ['Aquatic Chronic 1 (H410)',{cls:'aquatic_chronic',cat:'1',h:'H410',m:1}],
+  ['Aquatic Chronic 2 (H411)',{cls:'aquatic_chronic',cat:'2',h:'H411'}],
+  ['Aquatic Chronic 3 (H412)',{cls:'aquatic_chronic',cat:'3',h:'H412'}],
+  ['Aquatic Chronic 4 (H413)',{cls:'aquatic_chronic',cat:'4',h:'H413'}],
+  ['Ozone 1 (H420)',{cls:'ozone',cat:'1',h:'H420'}],
+  ['Endocrine Disruptor HH 1 (EUH380)',{cls:'ed_hh',cat:'1',h:'EUH380'}],
+  ['Endocrine Disruptor HH 2 (EUH381)',{cls:'ed_hh',cat:'2',h:'EUH381'}],
+  ['Endocrine Disruptor ENV 1 (EUH430)',{cls:'ed_env',cat:'1',h:'EUH430'}],
+  ['Endocrine Disruptor ENV 2 (EUH431)',{cls:'ed_env',cat:'2',h:'EUH431'}],
+  ['PBT (EUH440)',{cls:'pbt',cat:'1',h:'EUH440'}],
+  ['vPvB (EUH441)',{cls:'vpvb',cat:'1',h:'EUH441'}],
+  ['PMT (EUH450)',{cls:'pmt',cat:'1',h:'EUH450'}],
+  ['vPvM (EUH451)',{cls:'vpvm',cat:'1',h:'EUH451'}],
+  ['Flammable (H225/H226)',{cls:'flam',cat:'-',h:'H226'}],
+  ['Ox. Sol./Liq. 3 (H272)',{cls:'ox',cat:'3',h:'H272'}],
+  ['Ox. Sol./Liq. 1/2 (H271)',{cls:'ox',cat:'1',h:'H271'}],
+  ['Corrosive to metals (H290)',{cls:'metcorr',cat:'1',h:'H290'}],
+  ['EUH031 — toxic gas with acids',{cls:'euh',cat:'-',h:'EUH031'}]
+];
+
+const HMAP={
+  H300:['acute_oral','1'],H301:['acute_oral','3'],H302:['acute_oral','4'],
+  H310:['acute_dermal','1'],H311:['acute_dermal','3'],H312:['acute_dermal','4'],
+  H330:['acute_inhal','1'],H331:['acute_inhal','3'],H332:['acute_inhal','4'],
+  H314:['skin_corr','1B'],H315:['skin_irrit','2'],H318:['eye_dam','1'],H319:['eye_irrit','2'],
+  H317:['skin_sens','1'],H334:['resp_sens','1'],
+  H340:['muta','1B'],H341:['muta','2'],H350:['carc','1B'],H351:['carc','2'],
+  H360:['repr','1B'],H361:['repr','2'],H362:['lact','-'],
+  H370:['stot_se','1'],H371:['stot_se','2'],H335:['stot_se','3r'],H336:['stot_se','3n'],
+  H372:['stot_re','1'],H373:['stot_re','2'],
+  H304:['asp','1'],
+  H400:['aquatic_acute','1'],H410:['aquatic_chronic','1'],H411:['aquatic_chronic','2'],
+  H412:['aquatic_chronic','3'],H413:['aquatic_chronic','4'],
+  H225:['flam','-'],H226:['flam','-'],H271:['ox','1'],H272:['ox','3'],H290:['metcorr','1'],H420:['ozone','1'],
+  EUH380:['ed_hh','1'],EUH381:['ed_hh','2'],
+  EUH430:['ed_env','1'],EUH431:['ed_env','2'],
+  EUH440:['pbt','1'],EUH441:['vpvb','1'],
+  EUH450:['pmt','1'],EUH451:['vpvm','1']
+};
+
+function hcodesToHazards(text){
+  const seen=new Set(),haz=[];
+  (text.match(/\bH\d{3}\b/g)||[]).forEach(c=>{
+    if(HMAP[c]&&!seen.has(c)){seen.add(c);const[cls,cat]=HMAP[c];const h={cls,cat,h:c};
+      if((cls==='aquatic_acute'||cls==='aquatic_chronic')&&cat==='1')h.m=1;
+      haz.push(h);
+    }
+  });
+  (text.match(/\bEUH\d{3}\b/g)||[]).forEach(c=>{
+    if(!seen.has(c)){seen.add(c);haz.push({cls:'euh',cat:'-',h:c});}
+  });
+  return haz;
+}
+
+const ATEconv={acute_oral:{'1':0.5,'2':5,'3':100,'4':500},acute_dermal:{'1':5,'2':50,'3':300,'4':1100},acute_inhal:{'1':0.05,'2':0.5,'3':3,'4':11}};
+const ATEcat={acute_oral:[['1',5],['2',50],['3',300],['4',2000]],acute_dermal:[['1',50],['2',200],['3',1000],['4',2000]],acute_inhal:[['1',0.5],['2',2],['3',10],['4',20]]};
+const acuteH={acute_oral:{'1':'H300','2':'H300','3':'H301','4':'H302'},acute_dermal:{'1':'H310','2':'H310','3':'H311','4':'H312'},acute_inhal:{'1':'H330','2':'H330','3':'H331','4':'H332'}};
+const routeName={acute_oral:'oral',acute_dermal:'dermal',acute_inhal:'inhalation'};
+
+function mapResult(cls,cat,h){
+  const D='Danger',W='Warning';
+  switch(cls){
+    case 'acute_oral':case 'acute_dermal':case 'acute_inhal':return cat==='4'?{p:'GHS07',s:W,h}:{p:'GHS06',s:D,h};
+    case 'skin_corr':return{p:'GHS05',s:D,h:'H314'};
+    case 'skin_irrit':return{p:'GHS07',s:W,h:'H315'};
+    case 'eye_dam':return{p:'GHS05',s:D,h:'H318'};
+    case 'eye_irrit':return{p:'GHS07',s:W,h:'H319'};
+    case 'skin_sens':return{p:'GHS07',s:W,h:'H317'};
+    case 'resp_sens':return{p:'GHS08',s:D,h:'H334'};
+    case 'carc':return cat==='2'?{p:'GHS08',s:W,h:'H351'}:{p:'GHS08',s:D,h:'H350'};
+    case 'muta':return cat==='2'?{p:'GHS08',s:W,h:'H341'}:{p:'GHS08',s:D,h:'H340'};
+    case 'repr':return cat==='2'?{p:'GHS08',s:W,h:'H361'}:{p:'GHS08',s:D,h:'H360'};
+    case 'lact':return{p:null,s:null,h:'H362'};
+    case 'stot_se':if(cat==='1')return{p:'GHS08',s:D,h:'H370'};if(cat==='2')return{p:'GHS08',s:W,h:'H371'};if(cat==='3r')return{p:'GHS07',s:W,h:'H335'};return{p:'GHS07',s:W,h:'H336'};
+    case 'stot_re':return cat==='1'?{p:'GHS08',s:D,h:'H372'}:{p:'GHS08',s:W,h:'H373'};
+    case 'asp':return{p:'GHS08',s:D,h:'H304'};
+    case 'aquatic_acute':return{p:'GHS09',s:W,h:'H400'};
+    case 'aquatic_chronic':if(cat==='1')return{p:'GHS09',s:W,h:'H410'};if(cat==='2')return{p:null,s:null,h:'H411'};if(cat==='3')return{p:null,s:null,h:'H412'};return{p:null,s:null,h:'H413'};
+    case 'ozone':return{p:'GHS07',s:W,h:'H420'};
+    case 'ox':return(cat==='1'||cat==='2')?{p:'GHS03',s:D,h:'H271'}:{p:'GHS03',s:W,h:'H272'};
+    case 'ed_hh':return cat==='1'?{p:null,s:D,h:'EUH380'}:{p:null,s:W,h:'EUH381'};
+    case 'ed_env':return cat==='1'?{p:null,s:D,h:'EUH430'}:{p:null,s:W,h:'EUH431'};
+    case 'pbt':return{p:null,s:D,h:'EUH440'};
+    case 'vpvb':return{p:null,s:D,h:'EUH441'};
+    case 'pmt':return{p:null,s:D,h:'EUH450'};
+    case 'vpvm':return{p:null,s:D,h:'EUH451'};
+    default:return{p:null,s:null,h};
+  }
+}
+
+/* ===================== CORE CLASSIFICATION ENGINE ===================== */
+function classify(formula){
+  const triggered=[],deriv=[],flags=[],euh=new Set();
+  const has=(ing,cls)=>ing.hazards.filter(z=>z.cls===cls);
+
+  ['acute_oral','acute_dermal','acute_inhal'].forEach(route=>{
+    let sum=0,parts=[];
+    formula.forEach(({ing,pct})=>{
+      const hz=has(ing,route)[0];
+      if(hz&&pct>=0.1){
+        const ate=hz.ate!=null?hz.ate:ATEconv[route][hz.cat];
+        if(ate){sum+=pct/ate;parts.push(`${ing.name} ${pct}%/${ate}`);}
+      }
+    });
+    if(sum>0){
+      const ateMix=100/sum;
+      let cat=null;
+      for(const[c,lim]of ATEcat[route]){if(ateMix<=lim){cat=c;break;}}
+      if(cat){
+        const h=acuteH[route][cat];
+        triggered.push({cls:route,cat,h,reason:route});
+        deriv.push({t:`Acute toxicity (${routeName[route]}) → Cat ${cat}`,c:`ATEmix = 100 / Σ(Ci/ATEi) = 100 / (${parts.join(' + ')}) = ${ateMix.toFixed(1)} → ${h}`});
+      }
+    }
+  });
+
+  let corr=0,irr=0;
+  formula.forEach(({ing,pct})=>{if(has(ing,'skin_corr').length)corr+=pct;if(has(ing,'skin_irrit').length)irr+=pct;});
+  if(corr>=5){
+    triggered.push({cls:'skin_corr',cat:'1',h:'H314',reason:'skin_corr'});
+    deriv.push({t:'Skin corrosion → Skin Corr. 1',c:`Σ(Skin Corr. 1) = ${corr.toFixed(2)}% ≥ 5% → H314`});
+  } else if(corr>=1){
+    triggered.push({cls:'skin_irrit',cat:'2',h:'H315',reason:'skin_irrit'});
+    deriv.push({t:'Skin irritation → Skin Irrit. 2',c:`1% ≤ Σ(Skin Corr. 1) = ${corr.toFixed(2)}% < 5% → H315`});
+  } else if(irr>=10){
+    triggered.push({cls:'skin_irrit',cat:'2',h:'H315',reason:'skin_irrit'});
+    deriv.push({t:'Skin irritation → Skin Irrit. 2',c:`Σ(Skin Irrit. 2) = ${irr.toFixed(2)}% ≥ 10% → H315`});
+  } else if((10*corr+irr)>=10){
+    triggered.push({cls:'skin_irrit',cat:'2',h:'H315',reason:'skin_irrit'});
+    deriv.push({t:'Skin irritation → Skin Irrit. 2',c:`(10×${corr.toFixed(2)})+${irr.toFixed(2)} = ${(10*corr+irr).toFixed(2)} ≥ 10% → H315`});
+  }
+
+  let edam=0,eirr=0;
+  formula.forEach(({ing,pct})=>{if(has(ing,'eye_dam').length||has(ing,'skin_corr').length)edam+=pct;if(has(ing,'eye_irrit').length)eirr+=pct;});
+  if(edam>=3){
+    triggered.push({cls:'eye_dam',cat:'1',h:'H318',reason:'eye_dam'});
+    deriv.push({t:'Serious eye damage → Eye Dam. 1',c:`Σ(Eye Dam. 1, incl. skin corrosives) = ${edam.toFixed(2)}% ≥ 3% → H318`});
+  } else if(edam>=1){
+    triggered.push({cls:'eye_irrit',cat:'2',h:'H319',reason:'eye_irrit'});
+    deriv.push({t:'Eye irritation → Eye Irrit. 2',c:`1% ≤ Σ(Eye Dam. 1) = ${edam.toFixed(2)}% < 3% → H319`});
+  } else if(eirr>=10){
+    triggered.push({cls:'eye_irrit',cat:'2',h:'H319',reason:'eye_irrit'});
+    deriv.push({t:'Eye irritation → Eye Irrit. 2',c:`Σ(Eye Irrit. 2) = ${eirr.toFixed(2)}% ≥ 10% → H319`});
+  } else if((10*edam+eirr)>=10){
+    triggered.push({cls:'eye_irrit',cat:'2',h:'H319',reason:'eye_irrit'});
+    deriv.push({t:'Eye irritation → Eye Irrit. 2',c:`(10×${edam.toFixed(2)})+${eirr.toFixed(2)} = ${(10*edam+eirr).toFixed(2)} ≥ 10% → H319`});
+  }
+
+  let ss=0,ss1A=0;
+  formula.forEach(({ing,pct})=>{
+    has(ing,'skin_sens').forEach(z=>{
+      if(z.cat==='1A')ss1A+=pct;
+      ss+=pct;
+    });
+  });
+  if(ss1A>=0.1){
+    triggered.push({cls:'skin_sens',cat:'1A',h:'H317',reason:'skin_sens'});
+    deriv.push({t:'Skin sensitisation → Skin Sens. 1A',c:`Σ(Skin Sens. 1A) = ${ss1A.toFixed(2)}% ≥ 0.1% → H317`});
+  } else if(ss>=1){
+    triggered.push({cls:'skin_sens',cat:'1',h:'H317',reason:'skin_sens'});
+    deriv.push({t:'Skin sensitisation → Skin Sens. 1',c:`Σ(Skin Sens. 1) = ${ss.toFixed(2)}% ≥ 1% → H317`});
+  }
+
+  let rs=0,rs1A=0;
+  formula.forEach(({ing,pct})=>{
+    has(ing,'resp_sens').forEach(z=>{
+      if(z.cat==='1A')rs1A+=pct;
+      rs+=pct;
+    });
+  });
+  if(rs1A>=0.1){
+    triggered.push({cls:'resp_sens',cat:'1A',h:'H334',reason:'resp_sens'});
+    deriv.push({t:'Respiratory sensitisation → Resp. Sens. 1A',c:`Σ(Resp. Sens. 1A) = ${rs1A.toFixed(2)}% ≥ 0.1% → H334`});
+  } else if(rs>=1){
+    triggered.push({cls:'resp_sens',cat:'1',h:'H334',reason:'resp_sens'});
+    deriv.push({t:'Respiratory sensitisation → Resp. Sens. 1',c:`Σ(Resp. Sens. 1) = ${rs.toFixed(2)}% ≥ 1% → H334`});
+  }
+
+  function cmr(cls,limits,label){
+    const buckets={};
+    formula.forEach(({ing,pct})=>{has(ing,cls).forEach(z=>{buckets[z.cat]=(buckets[z.cat]||0)+pct;});});
+    for(const cat of Object.keys(limits)){
+      const sum=Object.entries(buckets).filter(([c])=>catSeverity(c)>=catSeverity(cat)).reduce((a,[,v])=>a+v,0);
+      if(sum>=limits[cat]){
+        const map=mapResult(cls,cat,'');
+        triggered.push({cls,cat,h:map.h,reason:cls});
+        deriv.push({t:`${label} → Cat ${cat}`,c:`Σ = ${sum.toFixed(3)}% ≥ ${limits[cat]}% → ${map.h}`});
+        break;
+      }
+    }
+  }
+  cmr('carc',{'1B':0.1,'2':1},'Carcinogenicity');
+  cmr('muta',{'1B':0.1,'2':1},'Germ cell mutagenicity');
+  cmr('repr',{'1B':0.3,'2':3},'Reproductive toxicity');
+
+  let lac=0;
+  formula.forEach(({ing,pct})=>{if(has(ing,'lact').length)lac+=pct;});
+  if(lac>=0.3){
+    triggered.push({cls:'lact',cat:'-',h:'H362',reason:'lact'});
+    deriv.push({t:'Effects on/via lactation',c:`Σ = ${lac.toFixed(2)}% ≥ 0.3% → H362`});
+  }
+
+  const stotSE={};
+  formula.forEach(({ing,pct})=>{has(ing,'stot_se').forEach(z=>{stotSE[z.cat]=(stotSE[z.cat]||0)+pct;});});
+  const se1=stotSE['1']||0,se2=stotSE['2']||0,se3r=stotSE['3r']||0,se3n=stotSE['3n']||0;
+  if(se1>=10){
+    triggered.push({cls:'stot_se',cat:'1',h:'H370',reason:'stot_se'});
+    deriv.push({t:'STOT SE → Cat 1',c:`Σ(SE 1) = ${se1.toFixed(2)}% ≥ 10% → H370`});
+  } else if(se1>=1||se2>=10){
+    const v=se1>=1?`1% ≤ Σ(SE 1)=${se1.toFixed(2)}% <10%`:`Σ(SE 2)=${se2.toFixed(2)}% ≥10%`;
+    triggered.push({cls:'stot_se',cat:'2',h:'H371',reason:'stot_se'});
+    deriv.push({t:'STOT SE → Cat 2',c:`${v} → H371`});
+  }
+  if(se3r>=20){
+    triggered.push({cls:'stot_se',cat:'3r',h:'H335',reason:'stot_se3'});
+    deriv.push({t:'STOT SE 3 (respiratory irritation)',c:`Σ = ${se3r.toFixed(2)}% ≥ 20% → H335`});
+  }
+  if(se3n>=20){
+    triggered.push({cls:'stot_se',cat:'3n',h:'H336',reason:'stot_se3'});
+    deriv.push({t:'STOT SE 3 (narcotic effects)',c:`Σ = ${se3n.toFixed(2)}% ≥ 20% → H336`});
+  }
+
+  const re1=sumCC(formula,'stot_re','1'),re2=sumCC(formula,'stot_re','2');
+  if(re1>=10){
+    triggered.push({cls:'stot_re',cat:'1',h:'H372',reason:'stot_re'});
+    deriv.push({t:'STOT RE → Cat 1',c:`Σ(RE 1) = ${re1.toFixed(2)}% ≥ 10% → H372`});
+  } else if(re1>=1||re2>=10){
+    const v=re1>=1?`1% ≤ Σ(RE 1)=${re1.toFixed(2)}% <10%`:`Σ(RE 2)=${re2.toFixed(2)}% ≥10%`;
+    triggered.push({cls:'stot_re',cat:'2',h:'H373',reason:'stot_re'});
+    deriv.push({t:'STOT RE → Cat 2',c:`${v} → H373`});
+  }
+
+  let asp=0;
+  formula.forEach(({ing,pct})=>{if(has(ing,'asp').length)asp+=pct;});
+  if(asp>=10){
+    triggered.push({cls:'asp',cat:'1',h:'H304',reason:'asp'});
+    deriv.push({t:'Aspiration hazard → Asp. Tox. 1',c:`Σ(Asp. Tox. 1) = ${asp.toFixed(2)}% ≥ 10% → H304 (valid only if kinematic viscosity ≤ 20.5 mm²/s at 40 °C)`});
+    flags.push('Aspiration (H304) applies only if the finished product\u2019s kinematic viscosity is \u2264 20.5 mm\u00b2/s at 40 \u00b0C. Confirm viscosity.');
+  }
+
+  let aAcute=0,aChr1=0,aChr2=0,aChr3=0,aChr4=0;
+  formula.forEach(({ing,pct})=>{
+    has(ing,'aquatic_acute').forEach(z=>{aAcute+=(z.m||1)*pct;});
+    has(ing,'aquatic_chronic').forEach(z=>{
+      if(z.cat==='1')aChr1+=(z.m||1)*pct;
+      else if(z.cat==='2')aChr2+=pct;
+      else if(z.cat==='3')aChr3+=pct;
+      else aChr4+=pct;
+    });
+  });
+  if(aAcute>=25){
+    triggered.push({cls:'aquatic_acute',cat:'1',h:'H400',reason:'aquatic'});
+    deriv.push({t:'Aquatic Acute 1',c:`Σ(M×C) = ${aAcute.toFixed(2)}% ≥ 25% → H400`});
+  }
+  if(aChr1>=25){
+    triggered.push({cls:'aquatic_chronic',cat:'1',h:'H410',reason:'aquatic'});
+    deriv.push({t:'Aquatic Chronic 1',c:`Σ(M×C, Chronic 1) = ${aChr1.toFixed(2)}% ≥ 25% → H410`});
+  } else if((aChr1*10+aChr2)>=25){
+    triggered.push({cls:'aquatic_chronic',cat:'2',h:'H411',reason:'aquatic'});
+    deriv.push({t:'Aquatic Chronic 2',c:`(10×${aChr1.toFixed(2)})+${aChr2.toFixed(2)} = ${(aChr1*10+aChr2).toFixed(2)} ≥ 25% → H411`});
+  } else if((aChr1*100+aChr2*10+aChr3)>=25){
+    triggered.push({cls:'aquatic_chronic',cat:'3',h:'H412',reason:'aquatic'});
+    deriv.push({t:'Aquatic Chronic 3',c:`weighted Σ = ${(aChr1*100+aChr2*10+aChr3).toFixed(2)} ≥ 25% → H412`});
+  } else if((aChr1+aChr2+aChr3+aChr4)>=25){
+    triggered.push({cls:'aquatic_chronic',cat:'4',h:'H413',reason:'aquatic'});
+    deriv.push({t:'Aquatic Chronic 4',c:`Σ = ${(aChr1+aChr2+aChr3+aChr4).toFixed(2)} ≥ 25% → H413`});
+  }
+
+  let oz=0;
+  formula.forEach(({ing,pct})=>{if(has(ing,'ozone').length)oz+=pct;});
+  if(oz>=0.1){
+    triggered.push({cls:'ozone',cat:'1',h:'H420',reason:'ozone'});
+    deriv.push({t:'Hazardous to the ozone layer',c:`Σ = ${oz.toFixed(2)}% ≥ 0.1% → H420`});
+  }
+
+  const ox1sum=sumCC(formula,'ox','1'),ox2sum=sumCC(formula,'ox','2'),ox3sum=sumCC(formula,'ox','3');
+  let ox3legacy=0;
+  formula.forEach(({ing,pct})=>{ing.hazards.forEach(z=>{if(z.cls==='ox'&&z.cat==='-')ox3legacy+=pct;});});
+  const ox3total=ox3sum+ox3legacy;
+  if((ox1sum+ox2sum)>=5){
+    triggered.push({cls:'ox',cat:'1',h:'H271',reason:'ox'});
+    deriv.push({t:'Oxidising → Cat 1/2',c:`Σ(Ox Cat 1+2) = ${(ox1sum+ox2sum).toFixed(2)}% ≥ 5% → H271 (Danger, GHS03). Confirm with finished-mixture test.`});
+  } else if(ox3total>=5){
+    triggered.push({cls:'ox',cat:'3',h:'H272',reason:'ox'});
+    deriv.push({t:'Oxidising → Cat 3',c:`Σ(Ox Cat 3) = ${ox3total.toFixed(2)}% ≥ 5% → H272 (Warning, GHS03). Confirm with finished-mixture test.`});
+  } else if(ox3total>0||ox1sum+ox2sum>0){
+    flags.push(`Oxidising component(s) present but below 5% classification threshold (Ox = ${(ox1sum+ox2sum+ox3total).toFixed(2)}%). No H272/H271 applied — verify with finished-product test if needed.`);
+  }
+
+  const flamSum=formula.reduce((a,{ing,pct})=>a+(ing.hazards.some(z=>z.cls==='flam')?pct:0),0);
+  if(flamSum>0)flags.push(`Flammable component(s) present (~${flamSum.toFixed(1)}%). Flash point of the finished mixture must be measured to classify Flam. Liq.`);
+
+  const mcSum=sumCC(formula,'metcorr','1');
+  if(mcSum>0&&mcSum<5)flags.push(`Corrosive-to-metals component(s) present (~${mcSum.toFixed(1)}%). If ≥5% of a Met. Corr. 1 substance, the mixture is also Met. Corr. 1 (H290) — add it manually if applicable.`);
+  else if(mcSum>=5){
+    triggered.push({cls:'metcorr',cat:'1',h:'H290',reason:'metcorr'});
+    deriv.push({t:'Corrosive to metals → Cat 1',c:`Σ(Met. Corr. 1) = ${mcSum.toFixed(2)}% ≥ 5% → H290`});
+  }
+
+  let edHH1=0,edHH2=0;
+  formula.forEach(({ing,pct})=>{has(ing,'ed_hh').forEach(z=>{if(z.cat==='1')edHH1+=pct;else if(z.cat==='2')edHH2+=pct;});});
+  if(edHH1>=0.1){
+    triggered.push({cls:'ed_hh',cat:'1',h:'EUH380',reason:'ed_hh'});
+    deriv.push({t:'Endocrine disruptor (human health) → Cat 1',c:`Σ(ED HH 1) = ${edHH1.toFixed(2)}% ≥ 0.1% → EUH380`});
+  } else if(edHH2>=1){
+    triggered.push({cls:'ed_hh',cat:'2',h:'EUH381',reason:'ed_hh'});
+    deriv.push({t:'Endocrine disruptor (human health) → Cat 2',c:`Σ(ED HH 2) = ${edHH2.toFixed(2)}% ≥ 1% → EUH381`});
+  }
+  if(edHH2>=0.1&&edHH2<1)flags.push(`Category 2 endocrine disruptor (human health) present at ${edHH2.toFixed(2)}% (≥0.1% but <1%). SDS must be available upon request.`);
+
+  let edEnv1=0,edEnv2=0;
+  formula.forEach(({ing,pct})=>{has(ing,'ed_env').forEach(z=>{if(z.cat==='1')edEnv1+=pct;else if(z.cat==='2')edEnv2+=pct;});});
+  if(edEnv1>=0.1){
+    triggered.push({cls:'ed_env',cat:'1',h:'EUH430',reason:'ed_env'});
+    deriv.push({t:'Endocrine disruptor (environment) → Cat 1',c:`Σ(ED ENV 1) = ${edEnv1.toFixed(2)}% ≥ 0.1% → EUH430`});
+  } else if(edEnv2>=1){
+    triggered.push({cls:'ed_env',cat:'2',h:'EUH431',reason:'ed_env'});
+    deriv.push({t:'Endocrine disruptor (environment) → Cat 2',c:`Σ(ED ENV 2) = ${edEnv2.toFixed(2)}% ≥ 1% → EUH431`});
+  }
+  if(edEnv2>=0.1&&edEnv2<1)flags.push(`Category 2 endocrine disruptor (environment) present at ${edEnv2.toFixed(2)}% (≥0.1% but <1%). SDS must be available upon request.`);
+
+  let pbtSum=0,vpvbSum=0;
+  formula.forEach(({ing,pct})=>{has(ing,'pbt').forEach(()=>pbtSum+=pct);has(ing,'vpvb').forEach(()=>vpvbSum+=pct);});
+  if(pbtSum>=0.1){
+    triggered.push({cls:'pbt',cat:'1',h:'EUH440',reason:'pbt'});
+    deriv.push({t:'PBT → Category 1',c:`Σ(PBT) = ${pbtSum.toFixed(2)}% ≥ 0.1% → EUH440`});
+  }
+  if(vpvbSum>=0.1){
+    triggered.push({cls:'vpvb',cat:'1',h:'EUH441',reason:'vpvb'});
+    deriv.push({t:'vPvB → Category 1',c:`Σ(vPvB) = ${vpvbSum.toFixed(2)}% ≥ 0.1% → EUH441`});
+  }
+
+  let pmtSum=0,vpvmSum=0;
+  formula.forEach(({ing,pct})=>{has(ing,'pmt').forEach(()=>pmtSum+=pct);has(ing,'vpvm').forEach(()=>vpvmSum+=pct);});
+  if(pmtSum>=0.1){
+    triggered.push({cls:'pmt',cat:'1',h:'EUH450',reason:'pmt'});
+    deriv.push({t:'PMT → Category 1',c:`Σ(PMT) = ${pmtSum.toFixed(2)}% ≥ 0.1% → EUH450`});
+  }
+  if(vpvmSum>=0.1){
+    triggered.push({cls:'vpvm',cat:'1',h:'EUH451',reason:'vpvm'});
+    deriv.push({t:'vPvM → Category 1',c:`Σ(vPvM) = ${vpvmSum.toFixed(2)}% ≥ 0.1% → EUH451`});
+  }
+
+  formula.forEach(({ing,pct})=>{has(ing,'euh').forEach(z=>{if(pct>=1)euh.add(z.h);});});
+
+  let allergenPct=0,allergenNames=[];
+  formula.forEach(({ing,pct})=>{if((ing.allergen||'').toLowerCase().includes('contains')){allergenPct+=pct;allergenNames.push(ing.name);}});
+
+  const res=consolidate(triggered,deriv,flags,euh);
+  res.allergen={pct:allergenPct,names:allergenNames};
+  return res;
+}
+
+function sumCC(f,cls,cat){let s=0;f.forEach(({ing,pct})=>{ing.hazards.forEach(z=>{if(z.cls===cls&&z.cat===cat)s+=pct;});});return s;}
+function catSeverity(c){return c==='2'?1:2;}
+
+function consolidate(triggered,deriv,flags,euh){
+  const pic={};let danger=false;const hset=[];
+  triggered.forEach(t=>{
+    const m=mapResult(t.cls,t.cat,t.h);
+    if(m.s==='Danger')danger=true;
+    if(m.p){pic[m.p]=pic[m.p]||new Set();pic[m.p].add(t.reason);}
+    if(!hset.includes(m.h))hset.push(m.h);
+  });
+  let hcodes=hset.slice();
+  if(hcodes.includes('H314'))hcodes=hcodes.filter(h=>h!=='H315'&&h!=='H319'&&h!=='H318');
+  if(hcodes.includes('H318'))hcodes=hcodes.filter(h=>h!=='H319');
+  if(pic['GHS06'])delete pic['GHS07'];
+  if(pic['GHS05']&&pic['GHS07']){
+    ['skin_irrit','eye_irrit'].forEach(r=>pic['GHS07'].delete(r));
+    if(pic['GHS07'].size===0)delete pic['GHS07'];
+  }
+  if(pic['GHS08']&&pic['GHS08'].has('resp_sens')&&pic['GHS07']){
+    ['skin_sens','skin_irrit','eye_irrit'].forEach(r=>pic['GHS07'].delete(r));
+    if(pic['GHS07'].size===0)delete pic['GHS07'];
+  }
+  const order=['GHS01','GHS02','GHS03','GHS04','GHS05','GHS06','GHS08','GHS07','GHS09'];
+  const pictos=order.filter(p=>pic[p]);
+  const signal=danger?'Danger':((pictos.length||hcodes.length)?'Warning':null);
+  const pset=[];
+  hcodes.forEach(h=>{(Pmap[h]||[]).forEach(p=>{if(!pset.includes(p))pset.push(p);});});
+  return{pictos,signal,hcodes,euh:[...euh],pstatements:pset.slice(0,8),deriv,flags};
+}
+
+/* ===================== GHS PICTOGRAMS ===================== */
+function picto(code){
+  const frame='<rect x="11" y="11" width="42" height="42" rx="3" transform="rotate(45 32 32)" fill="#fff" stroke="#D72638" stroke-width="5"/>';
+  const sym={
+    GHS01:'<g fill="#1a1a1a"><circle cx="32" cy="40" r="4"/><path d="M32 14l3 9 8-5-5 8 9 3-9 3 5 8-8-5-3 9-3-9-8 5 5-8-9-3 9-3-5-8 8 5z"/></g>',
+    GHS02:'<path d="M34 16c2 7-5 9-5 15 0 3 2 5 2 5s2-2 2-6c4 3 5 7 5 11 0 6-4 10-9 10-6 0-10-5-10-11 0-9 8-11 7-19 0 0 5 3 8 4-3-3-3-7-2-9z" fill="#1a1a1a"/>',
+    GHS03:'<g fill="#1a1a1a"><circle cx="32" cy="44" r="9" fill="none" stroke="#1a1a1a" stroke-width="4"/><path d="M33 16c1 5-4 7-4 11 0 2 2 4 2 4s2-2 2-4c3 2 4 5 4 8h-8c-2-7 3-9 2-15 0 0 0 0 0-4z"/></g>',
+    GHS04:'<g fill="none" stroke="#1a1a1a" stroke-width="3.5"><rect x="25" y="20" width="14" height="26" rx="5"/><line x1="32" y1="14" x2="32" y2="20"/></g>',
+    GHS05:'<g fill="#1a1a1a"><rect x="13.5" y="17" width="6" height="13" rx="1.4" transform="rotate(42 16.5 23)"/><rect x="44.5" y="17" width="6" height="13" rx="1.4" transform="rotate(-42 47.5 23)"/><path d="M22 31l-1.5 5M42 31l1.5 5" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M14 41h13l-2.2 5H16.2z"/><rect x="37" y="43" width="13" height="4"/><path d="M40 43l1.6-3M45 43l1.6-3" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round"/></g>',
+    GHS06:'<g fill="#1a1a1a"><g stroke="#1a1a1a" stroke-width="2.6" stroke-linecap="round"><line x1="21" y1="43" x2="43" y2="50"/><line x1="43" y1="43" x2="21" y2="50"/></g><circle cx="20" cy="42.5" r="2.3"/><circle cx="20" cy="50.5" r="2.3"/><circle cx="44" cy="42.5" r="2.3"/><circle cx="44" cy="50.5" r="2.3"/><path d="M32 18c-6.6 0-11.5 4.4-11.5 10.8 0 3.8 1.8 6.2 3.6 7.9v3.3h2.7v-2.7h1.9v2.7h6.6v-2.7h1.9v2.7h2.7v-3.3c1.8-1.7 3.6-4.1 3.6-7.9C43.5 22.4 38.6 18 32 18z"/><circle cx="27.2" cy="30" r="2.7" fill="#fff"/><circle cx="36.8" cy="30" r="2.7" fill="#fff"/><path d="M32 33l-1.5 3.2h3z" fill="#fff"/></g>',
+    GHS07:'<g fill="#1a1a1a"><rect x="29.5" y="20" width="5" height="16" rx="2.5"/><circle cx="32" cy="43" r="3"/></g>',
+    GHS08:'<g fill="#1a1a1a"><circle cx="32" cy="21.5" r="4.2"/><path d="M25.5 27h13v9.5l-3.2 12.5h-2.1l-1.2-9.3-1.2 9.3h-2.1L25.5 36.5z"/><path d="M32 29.5l1.6 4.9h5.1l-4.1 3 1.6 4.9L32 39.2l-4.2 3.1 1.6-4.9-4.1-3h5.1z" fill="#fff"/></g>',
+    GHS09:'<g fill="#1a1a1a"><path d="M15 45h22" stroke="#1a1a1a" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M17 38c4-3.2 10-3.2 13.5 0-3.5 3.2-9.5 3.2-13.5 0z"/><path d="M30 38l5.5-3.4v6.8z"/><path d="M20.5 36.4l2 1.6M22.5 36.4l-2 1.6" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/><rect x="42.5" y="31" width="2.4" height="14"/><path d="M43.7 31c-3.5-1.5-5.5-0.5-7-3M43.7 35c3.5-1.5 5.5-0.5 7-3M43.7 28.5c-2-2-2-4.5-1-7" stroke="#1a1a1a" stroke-width="1.8" fill="none" stroke-linecap="round"/></g>'
+  };
+  return `<svg class="picto" viewBox="0 0 64 64" aria-label="${code}" role="img">${frame}${sym[code]||''}</svg>`;
+}
+
+/* ===================== SEED LIBRARY ===================== */
+const SEED=[
+  {"id":"c00","name":"1,3-Propanediol","hazards":[],"msds":""},
+  {"id":"c01","name":"Almond Blossom and Red Plum Fragrance oil","hazards":[{"cls":"aquatic_chronic","cat":"3","h":"H412"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"stot_se","cat":"3r","h":"H335"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"non-allergenic"},
+  {"id":"c02","name":"Aloe and Bamboo Fragrance oil","hazards":[{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"aquatic_chronic","cat":"2","h":"H411"}],"allergen":"Contains allergenics"},
+  {"id":"c03","name":"Apricot Cream Rose Fragrance oil","hazards":[{"cls":"aquatic_chronic","cat":"2","h":"H411"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"Contains allergenics"},
+  {"id":"c04","name":"Baby Powder Fragrance oil","hazards":[{"cls":"aquatic_chronic","cat":"2","h":"H411"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"Contains allergenics"},
+  {"id":"c05","name":"Bergamot oil","hazards":[{"cls":"flam","cat":"-","h":"H226"},{"cls":"asp","cat":"1","h":"H304"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"aquatic_chronic","cat":"1","h":"H410","m":1}],"allergen":"Contains allergenics"},
+  {"id":"c06","name":"beta-CD","hazards":[]},
+  {"id":"c07","name":"Betadet HR-50K","hazards":[{"cls":"eye_dam","cat":"1","h":"H318"},{"cls":"aquatic_chronic","cat":"3","h":"H412"}],"active":0.6,"notes":"Not 100% natural. Replaced with Mackam 50 ULB."},
+  {"id":"c08","name":"Bioloop56L","hazards":[]},
+  {"id":"c09","name":"Blanova Tens APG 810","hazards":[{"cls":"eye_irrit","cat":"2","h":"H319"}],"active":0.6},
+  {"id":"c10","name":"Blanova Tens APG 818","hazards":[{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"eye_dam","cat":"1","h":"H318"}],"active":0.6},
+  {"id":"c11","name":"Blue pigment (Pigm'azur SAS)","hazards":[]},
+  {"id":"c12","name":"Cedar Forest Fragrance oil","hazards":[{"cls":"aquatic_chronic","cat":"2","h":"H411"},{"cls":"aquatic_acute","cat":"1","h":"H400","m":1},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"Contains allergenics"},
+  {"id":"c13","name":"Cherry blossom oil","hazards":[{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"aquatic_chronic","cat":"3","h":"H412"}],"allergen":"Contains allergenics"},
+  {"id":"c14","name":"Cinnamon oil","hazards":[{"cls":"acute_dermal","cat":"4","h":"H312"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"aquatic_chronic","cat":"3","h":"H412"}],"allergen":"Contains allergenics"},
+  {"id":"c15","name":"Citric acid monohydrate (99-100%)","hazards":[{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"stot_se","cat":"3r","h":"H335"}]},
+  {"id":"c16","name":"Coconut and Lemongrass Fragrance oil","hazards":[{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"Contains allergenics"},
+  {"id":"c17","name":"Cosphaderm CHA","hazards":[{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"stot_se","cat":"3r","h":"H335"}]},
+  {"id":"c18","name":"Cotton Fresh Fragrance oil","hazards":[{"cls":"aquatic_chronic","cat":"2","h":"H411"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"Contains allergenics"},
+  {"id":"c19","name":"EcoEnzyme - Det L3 (liquid)","hazards":[{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"resp_sens","cat":"1","h":"H334"}]},
+  {"id":"c20","name":"Emal 10 N","hazards":[{"cls":"acute_oral","cat":"4","h":"H302"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"eye_dam","cat":"1","h":"H318"},{"cls":"aquatic_chronic","cat":"3","h":"H412"}]},
+  {"id":"c21","name":"Estisol199","hazards":[],"notes":"One component is CLP classified but below CLP limit"},
+  {"id":"c22","name":"Eucarol AGE EC/MB","hazards":[]},
+  {"id":"c23","name":"Evicide levulinate S eco","hazards":[{"cls":"eye_irrit","cat":"2","h":"H319"}]},
+  {"id":"c24","name":"Fresh Linen Fragrance oil","hazards":[{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"aquatic_chronic","cat":"2","h":"H411"}],"allergen":"Contains allergenics"},
+  {"id":"c25","name":"Glycerin (Glycerol >99.5%)","hazards":[]},
+  {"id":"c26","name":"Golden Apple Fragrance oil","hazards":[{"cls":"aquatic_chronic","cat":"2","h":"H411"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"non-allergenic"},
+  {"id":"c27","name":"Golden Apple Fragrance oil 10%","hazards":[{"cls":"aquatic_chronic","cat":"2","h":"H411"},{"cls":"eye_irrit","cat":"2","h":"H319"}],"allergen":"non-allergenic"},
+  {"id":"c28","name":"Golden Apple Fragrance oil 20%","hazards":[{"cls":"aquatic_chronic","cat":"2","h":"H411"},{"cls":"eye_irrit","cat":"2","h":"H319"}],"allergen":"non-allergenic"},
+  {"id":"c29","name":"Grapefruit oil","hazards":[{"cls":"flam","cat":"-","h":"H226"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"asp","cat":"1","h":"H304"},{"cls":"aquatic_chronic","cat":"1","h":"H410","m":1}],"allergen":"Contains allergenics"},
+  {"id":"c30","name":"Green pigment (Pigm'Azur SAS)","hazards":[]},
+  {"id":"c31","name":"Honeysuckle Fragrance oil","hazards":[{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"aquatic_chronic","cat":"2","h":"H411"}],"allergen":"Contains allergenics"},
+  {"id":"c32","name":"Honeysurf HF","hazards":[{"cls":"eye_irrit","cat":"2","h":"H319"}]},
+  {"id":"c33","name":"Honeysurf LF","hazards":[{"cls":"eye_irrit","cat":"2","h":"H319"}]},
+  {"id":"c34","name":"Hydrangea Garden Fragrance oil","hazards":[{"cls":"acute_oral","cat":"4","h":"H302"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"aquatic_acute","cat":"1","h":"H400","m":1},{"cls":"aquatic_chronic","cat":"2","h":"H411"}],"allergen":"Contains allergenics"},
+  {"id":"c35","name":"Jasmine Fragrance oil","hazards":[{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"aquatic_chronic","cat":"2","h":"H411"}],"allergen":"Contains allergenics"},
+  {"id":"c36","name":"Lactic acid","hazards":[{"cls":"skin_corr","cat":"1B","h":"H314"},{"cls":"eye_dam","cat":"1","h":"H318"}]},
+  {"id":"c37","name":"Lamesoft PO65","hazards":[{"cls":"eye_dam","cat":"1","h":"H318"}]},
+  {"id":"c38","name":"Lavender Essential oil","hazards":[{"cls":"asp","cat":"1","h":"H304"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"aquatic_chronic","cat":"3","h":"H412"}],"allergen":"Contains allergenics"},
+  {"id":"c39","name":"Lavender Garden Fragrance oil","hazards":[{"cls":"eye_dam","cat":"1","h":"H318"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"aquatic_chronic","cat":"3","h":"H412"}],"allergen":"Contains allergenics"},
+  {"id":"c40","name":"Lavender oil (Odorata)","hazards":[{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"stot_se","cat":"2","h":"H371"},{"cls":"aquatic_chronic","cat":"2","h":"H411"}],"allergen":"Contains allergenics"},
+  {"id":"c41","name":"Lemon Squeeze Fragrance oil","hazards":[{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"aquatic_chronic","cat":"3","h":"H412"}],"allergen":"Contains allergenics"},
+  {"id":"c42","name":"Lemongrass Essential oil","hazards":[{"cls":"asp","cat":"1","h":"H304"},{"cls":"eye_dam","cat":"1","h":"H318"},{"cls":"aquatic_chronic","cat":"2","h":"H411"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"Contains allergenics"},
+  {"id":"c43","name":"Lemongrass oil (Odorata)","hazards":[{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"eye_dam","cat":"1","h":"H318"},{"cls":"aquatic_chronic","cat":"2","h":"H411"}],"allergen":"Contains allergenics"},
+  {"id":"c44","name":"Levulinate acid","hazards":[{"cls":"acute_oral","cat":"4","h":"H302"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"stot_se","cat":"3r","h":"H335"}]},
+  {"id":"c45","name":"Mackam50 ULB","hazards":[{"cls":"eye_dam","cat":"1","h":"H318"},{"cls":"aquatic_chronic","cat":"3","h":"H412"}]},
+  {"id":"c46","name":"Mentha arvensis oil (Borsmenta)","hazards":[{"cls":"acute_oral","cat":"4","h":"H302"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"aquatic_chronic","cat":"2","h":"H411"}],"allergen":"Contains allergenics"},
+  {"id":"c47","name":"Milk & Honey oil","hazards":[]},
+  {"id":"c48","name":"Orange oil (Odorata)","hazards":[{"cls":"flam","cat":"-","h":"H226"},{"cls":"asp","cat":"1","h":"H304"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"aquatic_chronic","cat":"2","h":"H411"}],"allergen":"Contains allergenics"},
+  {"id":"c49","name":"Orange pigment (Pigm'azur SAS)","hazards":[]},
+  {"id":"c50","name":"Petitgrain Essential oil","hazards":[{"cls":"asp","cat":"1","h":"H304"},{"cls":"aquatic_chronic","cat":"2","h":"H411"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"Contains allergenics"},
+  {"id":"c51","name":"2-Phenoxyethanol","hazards":[{"cls":"eye_dam","cat":"1","h":"H318"},{"cls":"acute_oral","cat":"4","h":"H302"},{"cls":"stot_se","cat":"3r","h":"H335"}]},
+  {"id":"c52","name":"Pink Grapefruit and Vanilla Fragrance oil","hazards":[{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"aquatic_chronic","cat":"2","h":"H411"}],"allergen":"Contains allergenics"},
+  {"id":"c53","name":"Plantapon ACG 50","hazards":[{"cls":"eye_irrit","cat":"2","h":"H319"}]},
+  {"id":"c54","name":"Red pigment (Pigm'azur SAS)","hazards":[]},
+  {"id":"c55","name":"Roasted Chestnut and Vanilla Fragrance oil","hazards":[{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"aquatic_chronic","cat":"2","h":"H411"}],"allergen":"Contains allergenics"},
+  {"id":"c56","name":"Salt (Sodium chloride)","hazards":[]},
+  {"id":"c57","name":"Sea Mineral Fragrance oil","hazards":[{"cls":"aquatic_chronic","cat":"2","h":"H411"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"eye_irrit","cat":"2","h":"H319"}],"allergen":"Contains allergenics"},
+  {"id":"c58","name":"Seville Orange Fragrance oil","hazards":[{"cls":"aquatic_chronic","cat":"3","h":"H412"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"non-allergenic"},
+  {"id":"c59","name":"Seville Orange Fragrance oil 10%","hazards":[{"cls":"aquatic_chronic","cat":"3","h":"H412"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"non-allergenic"},
+  {"id":"c60","name":"Seville Orange Fragrance oil 20%","hazards":[{"cls":"aquatic_chronic","cat":"3","h":"H412"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"non-allergenic"},
+  {"id":"c61","name":"Sicilian Bergamot and Lime Fragrance oil","hazards":[{"cls":"aquatic_chronic","cat":"3","h":"H412"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"Contains allergenics"},
+  {"id":"c62","name":"Sicilian Bergamot and Lime Fragrance oil 10%","hazards":[{"cls":"aquatic_chronic","cat":"3","h":"H412"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"Contains allergenics"},
+  {"id":"c63","name":"Sicilian Bergamot and Lime Fragrance oil 20%","hazards":[{"cls":"aquatic_chronic","cat":"3","h":"H412"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"Contains allergenics"},
+  {"id":"c64","name":"Sodium bicarbonate","hazards":[]},
+  {"id":"c65","name":"Sodium carbonate","hazards":[{"cls":"eye_irrit","cat":"2","h":"H319"}]},
+  {"id":"c66","name":"Spring Blossom and Breeze Fragrance oil","hazards":[{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"eye_irrit","cat":"2","h":"H319"}],"allergen":"Contains allergenics"},
+  {"id":"c67","name":"Symbio Solvclear plus MB","hazards":[{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"skin_sens","cat":"1","h":"H317"}]},
+  {"id":"c68","name":"Verstatil SL","hazards":[{"cls":"eye_dam","cat":"1","h":"H318"}]},
+  {"id":"c69","name":"Violet pigment NC144 (Pigm'azur SAS)","hazards":[]},
+  {"id":"c70","name":"Violet pigment NC171 (Pigm'azur SAS)","hazards":[]},
+  {"id":"c71","name":"Water Lily and Lotus Fragrance oil","hazards":[{"cls":"skin_sens","cat":"1","h":"H317"},{"cls":"aquatic_acute","cat":"1","h":"H400","m":1},{"cls":"aquatic_chronic","cat":"2","h":"H411"}],"allergen":"Contains allergenics"},
+  {"id":"c72","name":"Wild Mint Fragrance oil","hazards":[{"cls":"aquatic_chronic","cat":"2","h":"H411"},{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"skin_sens","cat":"1","h":"H317"}],"allergen":"Contains allergenics"},
+  {"id":"c73","name":"Xanthan FN","hazards":[]},
+  {"id":"c74","name":"Xanthan FNCS","hazards":[]},
+  {"id":"c75","name":"Yellow pigment (Pigmazur SAS)","hazards":[]},
+  {"id":"c76","name":"Estisurf M10","hazards":[]},
+  {"id":"c77","name":"amphiclean A","hazards":[]},
+  {"id":"x01","name":"Sodium percarbonate","cas":"15630-89-4","hazards":[{"cls":"ox","cat":"3","h":"H272"},{"cls":"acute_oral","cat":"4","h":"H302"},{"cls":"eye_dam","cat":"1","h":"H318"}],"notes":"Ox. Sol. 3. Correct SDS: H272+H302+H318. No H315."},
+  {"id":"x02","name":"Citric acid (anhydrous)","cas":"77-92-9","hazards":[{"cls":"eye_irrit","cat":"2","h":"H319"}]},
+  {"id":"x03","name":"Sodium hydroxide","cas":"1310-73-2","hazards":[{"cls":"skin_corr","cat":"1A","h":"H314"},{"cls":"metcorr","cat":"1","h":"H290"}]},
+  {"id":"x04","name":"Lactic acid (≥90%)","cas":"50-21-5","hazards":[{"cls":"skin_corr","cat":"1C","h":"H314"}]},
+  {"id":"x05","name":"TAED (tetraacetylethylenediamine)","cas":"10543-57-4","hazards":[{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"skin_sens","cat":"1","h":"H317"}],"notes":"Bleach activator used with percarbonate"},
+  {"id":"x06","name":"Sodium sulfate (anhydrous)","cas":"7757-82-6","hazards":[]},
+  {"id":"x07","name":"Sodium citrate","cas":"68-04-2","hazards":[]},
+  {"id":"x08","name":"Benzalkonium chloride (50% aq.)","cas":"8001-54-5","hazards":[{"cls":"acute_oral","cat":"4","h":"H302"},{"cls":"skin_corr","cat":"1B","h":"H314"},{"cls":"aquatic_acute","cat":"1","h":"H400","m":10},{"cls":"aquatic_chronic","cat":"1","h":"H410","m":10}],"active":0.5,"notes":"Enter as % of as-supplied solution"},
+  {"id":"x09","name":"Ethanol (≥96%)","cas":"64-17-5","hazards":[{"cls":"flam","cat":"-","h":"H226"},{"cls":"eye_irrit","cat":"2","h":"H319"}]},
+  {"id":"x10","name":"Isopropyl alcohol (IPA)","cas":"67-63-0","hazards":[{"cls":"flam","cat":"-","h":"H226"},{"cls":"eye_irrit","cat":"2","h":"H319"},{"cls":"stot_se","cat":"3n","h":"H336"}]},
+  {"id":"x11","name":"Sodium laureth sulfate (SLES 70%)","cas":"68585-34-2","hazards":[{"cls":"skin_irrit","cat":"2","h":"H315"},{"cls":"eye_dam","cat":"1","h":"H318"}],"active":0.7,"notes":"Enter as % of as-supplied solution"},
+  {"id":"x12","name":"Sodium hypochlorite (5% active Cl)","cas":"7681-52-9","hazards":[{"cls":"skin_corr","cat":"1B","h":"H314"},{"cls":"aquatic_acute","cat":"1","h":"H400","m":10},{"cls":"metcorr","cat":"1","h":"H290"},{"cls":"euh","cat":"-","h":"EUH031"}],"active":0.05,"notes":"Enter as % of as-supplied 5% solution"},
+  {"id":"x13","name":"Bisphenol A","cas":"80-05-7","hazards":[{"cls":"repr","cat":"1B","h":"H360"},{"cls":"ed_hh","cat":"1","h":"EUH380"},{"cls":"ed_env","cat":"1","h":"EUH430"},{"cls":"skin_sens","cat":"1","h":"H317"}],"notes":"EU SVHC, endocrine disruptor Cat 1 (HH + ENV)"},
+  {"id":"x14","name":"Perfluorooctanoic acid (PFOA)","cas":"335-67-1","hazards":[{"cls":"carc","cat":"2","h":"H351"},{"cls":"repr","cat":"1B","h":"H360"},{"cls":"pbt","cat":"1","h":"EUH440"},{"cls":"pmt","cat":"1","h":"EUH450"}],"notes":"POP Regulation, PBT + PMT, banned in EU"}
+];
+
+/* ===================== STATE + UI ===================== */
+let LIB=[],FORMULA=[],editId=null,editHaz=[];
+const $=s=>document.querySelector(s);
+const sigHU={Danger:'Veszély',Warning:'Figyelem'};
+
+function loadLib(){const raw=store.get('clp_lib_v3');if(raw){try{LIB=JSON.parse(raw);}catch(e){LIB=JSON.parse(JSON.stringify(SEED));}}else LIB=JSON.parse(JSON.stringify(SEED));}
+function saveLib(){store.set('clp_lib_v3',JSON.stringify(LIB));$('#libcount').textContent=LIB.length;}
+function loadFormula(){const raw=store.get('clp_formula_v3');if(raw){try{FORMULA=JSON.parse(raw).filter(x=>LIB.find(l=>l.id===x.id));}catch(e){FORMULA=[];}}}
+function saveFormula(){store.set('clp_formula_v3',JSON.stringify(FORMULA));}
+function fillSelect(){const sel=$('#ingSelect');sel.innerHTML='<option value="">Select an ingredient…</option>'+LIB.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(i=>`<option value="${i.id}">${i.name}${i.active&&i.active!==1?' ('+(i.active*100).toFixed(0)+'% active)':''}</option>`).join('');}
+
+function renderFormula(){
+  const list=$('#flist'),empty=$('#fempty');
+  if(!FORMULA.length){list.innerHTML='';empty.style.display='block';}
+  else{
+    empty.style.display='none';
+    list.innerHTML=FORMULA.map((f,i)=>{
+      const ing=LIB.find(l=>l.id===f.id);if(!ing)return'';
+      const active=ing.active||1;
+      const adj=active!==1?` <small>(${active*100}% active → ${(f.pct*active).toFixed(2)}%)</small>`:'';
+      return `<div class="frow"><div class="nm">${ing.name}${adj}${ing.hazards.length?'':'<small>CLP-free</small>'}</div><input class="pe" type="number" min="0" max="100" step="0.01" value="${f.pct}" data-i="${i}"/><button class="x" data-rm="${i}" title="Remove">&times;</button></div>`;
+    }).join('');
+  }
+  const total=FORMULA.reduce((a,f)=>a+(+f.pct||0),0);
+  const tEl=$('#ftotal');tEl.textContent=total.toFixed(2)+' %';tEl.className='v'+(total>100.001?' over':'');
+  runClassify();
+}
+
+function runClassify(){
+  const area=$('#resultArea'),status=$('#rstatus');
+  const showDeriv=$('#showDeriv').checked;
+  const valid=FORMULA.map(f=>{
+    const ing=LIB.find(l=>l.id===f.id);
+    const active=ing?ing.active||1:1;
+    return{ing,pct:(+f.pct||0)*active};
+  }).filter(x=>x.ing&&x.pct>0);
+  
+  if(!valid.length){
+    area.innerHTML='<p style="color:#8B93A4;font-size:13.5px;margin:18px 0 6px">Add ingredients to generate a classification.</p>';
+    status.textContent='—';return;
+  }
+  const r=classify(valid);status.textContent=r.signal?r.signal.toUpperCase():'NOT CLASSIFIED';
+  let html='';
+  if(r.signal){const cl=r.signal==='Danger'?'danger':'warning';html+=`<span class="signal ${cl}">${r.signal} <small>${sigHU[r.signal]}</small></span>`;}
+  else html+=`<span class="signal none">Not classified (health &amp; environmental)</span>`;
+  
+  if(r.pictos.length)html+='<div class="pictos">'+r.pictos.map(p=>picto(p)).join('')+'</div>';
+  
+  if(r.hcodes.length){
+    html+='<div class="section-t">Hazard statements</div>'+r.hcodes.map(h=>`<div class="hline"><span class="hcode">${h}</span><span class="htext">${H[h]||''}</span></div>`).join('');
+  }
+  if(r.euh.length){
+    html+='<div class="section-t">Supplemental (EUH)</div>'+r.euh.map(h=>`<div class="hline euh"><span class="hcode">${h}</span><span class="htext">${H[h]||''}</span></div>`).join('');
+  }
+  if(r.pstatements.length)html+='<div class="section-t">Precautionary (representative)</div><div class="pchips">'+r.pstatements.map(p=>`<span class="pchip">${p}</span>`).join('')+'</div>';
+  
+  if(r.allergen.pct>0)html+=`<div class="flag info"><span>🌿</span><span><b>Fragrance allergens present</b> (${r.allergen.names.length} ingredient${r.allergen.names.length>1?'s':''}, ~${r.allergen.pct.toFixed(2)}%). Check 26-allergen declaration thresholds (Detergents Reg. 648/2004 ≥0.01%; cosmetics ≥0.001% leave-on / ≥0.01% rinse-off).</span></div>`;
+  
+  r.flags.forEach(f=>{html+=`<div class="flag"><span>⚠</span><span>${f}</span></div>`;});
+  
+  if(r.deriv.length&&showDeriv){
+    html+='<details class="deriv" open><summary>How this was classified ('+r.deriv.length+')</summary>'+r.deriv.map(d=>`<div class="ditem"><b>${d.t}</b><br><span class="dcalc">${d.c}</span></div>`).join('')+'</details>';
+  }
+  area.innerHTML=html;
+}
+
+function hzChip(z){
+  const map=mapResult(z.cls,z.cat,z.h);
+  let cls='hzchip';
+  if(z.cls==='euh')cls+=' w';
+  else if(['aquatic_acute','aquatic_chronic','ozone','ed_env','pbt','vpvb','pmt','vpvm'].includes(z.cls))cls+=' env';
+  else if(map.s==='Danger')cls+=' d';
+  else if(map.s==='Warning')cls+=' w';
+  else if(['ed_hh','ed_env','pbt','vpvb','pmt','vpvm'].includes(z.cls))cls+=' new';
+  const found=PRESETS.find(p=>p[1].cls===z.cls&&p[1].cat===z.cat&&p[1].h===z.h);
+  const label=found?found[0].replace(/^— Physical: |^— /,'').replace(/\s*\(.*\)$/,''):`${z.cls} ${z.cat}`;
+  return `<span class="${cls}">${z.h} ${label}</span>`;
+}
+
+function algCell(a){if(!a)return'<span class="alg x">—</span>';if(a.toLowerCase().includes('contains'))return '<span class="alg y">Contains</span>';return '<span class="alg n">None</span>';}
+
+function renderLib(){
+  const q=$('#libSearch').value.trim().toLowerCase();
+  const rows=LIB.filter(i=>!q||i.name.toLowerCase().includes(q)||(i.cas||'').includes(q)).sort((a,b)=>a.name.localeCompare(b.name));
+  $('#libBody').innerHTML=rows.map(i=>`<tr>
+    <td class="cname">${i.name}${i.notes?`<small>${i.notes}</small>`:''}${i.cas?`<small>CAS: ${i.cas}</small>`:''}</td>
+    <td><div class="hz">${i.hazards.length?i.hazards.map(hzChip).join(''):'<span style="color:var(--muted);font-size:12px">CLP-free</span>'}</div></td>
+    <td>${algCell(i.allergen)}</td>
+    <td>${i.active&&i.active!==1?(i.active*100).toFixed(0)+'%':'—'}</td>
+    <td>${i.msds&&/^https?:/i.test(i.msds)?`<a class="mlink" href="${i.msds}" target="_blank" rel="noopener">open</a>`:'<span class="alg x">—</span>'}</td>
+    <td><div class="rowact"><button class="iconbtn" data-edit="${i.id}" title="Edit">✎</button><button class="iconbtn del" data-del="${i.id}" title="Delete">🗑</button></div></td></tr>`).join('');
+}
+
+/* ===================== MODAL ===================== */
+function openModal(id,mode){
+  editId=id;editHaz=[];
+  const ing=id?LIB.find(l=>l.id===id):null;
+  $('#mTitle').textContent=id?'Edit ingredient':(mode==='sds'?'Add from SDS':mode==='web'?'Add from web lookup':'New ingredient');
+  $('#sdsBox').classList.toggle('hidden',mode!=='sds');
+  $('#webBox').classList.toggle('hidden',mode!=='web');
+  $('#mHelp').textContent=mode==='sds'?'Upload an SDS PDF — H-codes from Section 2 are extracted, then review below before saving.':mode==='web'?'Search for CLP classifications from multiple sources. AI mode (with API key) is the most reliable.':'Pick hazards from the list — categories and H-codes are pre-set.';
+  $('#mName').value=ing?ing.name:'';
+  $('#mCas').value=ing&&ing.cas?ing.cas:'';
+  $('#mMsds').value=ing&&ing.msds&&/^https?:/i.test(ing.msds)?ing.msds:'';
+  $('#mAllergen').value=ing&&ing.allergen?ing.allergen:'';
+  
+  const active=ing?ing.active||1:1;
+  if(active===0.7)$('#mActive').value='0.7';
+  else if(active===0.5)$('#mActive').value='0.5';
+  else if(active===0.3)$('#mActive').value='0.3';
+  else if(active!==1){$('#mActive').value='custom';$('#mActiveCustom').classList.remove('hidden');$('#mActiveVal').value=active;}
+  else{$('#mActive').value='1';$('#mActiveCustom').classList.add('hidden');}
+  
+  editHaz=ing?ing.hazards.map(h=>({...h})):[];
+  $('#mHazSelect').innerHTML=PRESETS.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
+  $('#sdsStatus').textContent='';$('#sdsProgress').classList.add('hidden');$('#sdsBarFill').style.width='0%';
+  switchSdsTab('File');
+  if(getApiKey())$('#sdsTabAI').textContent='⚡ AI mode ✓';
+  
+  // Web lookup init
+  $('#webStatus').className='fetchstatus wait';
+  $('#webStatus').textContent='Click "Look up" to search.';
+  $('#webQuery').value=ing?ing.name:'';
+  $('#webManual').classList.add('hidden');
+  resetWebSources();
+  
+  // Show API key banner if no key
+  const hasKey=!!getApiKey();
+  $('#apiKeyBanner').classList.toggle('hidden',hasKey);
+  
+  renderHazEdit();
+  $('#scrim').classList.add('open');
+}
+
+function renderHazEdit(){
+  $('#mHaz').innerHTML=editHaz.length?editHaz.map((z,i)=>{
+    const found=PRESETS.find(p=>p[1].cls===z.cls&&p[1].cat===z.cat&&p[1].h===z.h);
+    return `<span class="hzchip ${mapResult(z.cls,z.cat,z.h).s==='Danger'?'d':'w'}">${found?found[0].replace(/^— /,''):z.h}<button data-hz="${i}">×</button></span>`;
+  }).join(''):'<span style="color:var(--muted);font-size:12px">No hazards yet — CLP-free, or add/extract below.</span>';
+}
+
+function closeModal(){$('#scrim').classList.remove('open');editId=null;editHaz=[];}
+
+/* ===================== SDS EXTRACTION ===================== */
+let _pdfLib=null;
+async function getPdfLib(){
+  if(_pdfLib)return _pdfLib;
+  return new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload=()=>{
+      pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      _pdfLib=pdfjsLib;res(_pdfLib);
+    };
+    s.onerror=()=>rej(new Error('Could not load pdf.js'));
+    document.head.appendChild(s);
+  });
+}
+
+async function pdfToText(buf){
+  const lib=await getPdfLib();
+  const pdf=await lib.getDocument({data:buf}).promise;
+  let text='';
+  for(let p=1;p<=Math.min(pdf.numPages,20);p++){
+    const pg=await pdf.getPage(p);
+    const c=await pg.getTextContent();
+    text+='\n'+c.items.map(i=>i.str).join(' ');
+  }
+  return text;
+}
+
+function extractFromText(text, filename){
+  const cleaned=text
+    .replace(/nem\s+osztályozott[^\n]*/gi,'')
+    .replace(/not\s+classified[^\n]*/gi,'')
+    .replace(/nicht\s+eingestuft[^\n]*/gi,'')
+    .replace(/no\s+classification[^\n]*/gi,'');
+  const haz=hcodesToHazards(cleaned);
+  let name=filename?filename.replace(/\.pdf$/i,'').replace(/[_\-]+/g,' ').trim():'';
+  const namePatterns=[
+    /(?:Anyag neve|Termék neve|Kereskedelmi neve|Termék\s*azonosító)\s*[:\n]\s*([^\n]{3,80})/i,
+    /(?:Product name|Trade name|Product identifier)\s*:?\s*([A-Za-z0-9][^\n]{2,60})/i,
+    /(?:Handelsname|Produktname|Bezeichnung)\s*:?\s*([^\n]{3,60})/i
+  ];
+  for(const p of namePatterns){const m=text.match(p);if(m&&m[1].trim().length>2){name=m[1].trim();break;}}
+  const casM=(text.match(/\b\d{2,7}-\d{2}-\d\b/)||[])[0]||'';
+  const mfM=text.match(/M\s*[-=]\s*(\d+)/i);
+  const notes=mfM?`M-factor = ${mfM[1]}`:'';
+  return {name,cas:casM,haz,notes};
+}
+
+function bufToBase64(buf){
+  const bytes=new Uint8Array(buf);let bin='';const chunk=8192;
+  for(let i=0;i<bytes.length;i+=chunk)bin+=String.fromCharCode(...bytes.slice(i,i+chunk));
+  return btoa(bin);
+}
+
+const SDS_PROMPT=`Extract CLP/GHS hazard classification from this Safety Data Sheet. It may be in any language (Hungarian, English, German, etc.). Return ONLY valid JSON:
+{"name":"substance name","cas":"77-92-9 or empty","hcodes":["H302","H315"],"euhcodes":["EUH031"],"signal":"Danger or Warning or empty","allergen":"Contains allergenics or non-allergenic or empty","notes":"M-factor=10 or ATE=500 or empty"}
+Rules: H-codes exactly as H+3 digits. EUH+3 digits. Map Veszély/Gefahr→Danger, Figyelem/Achtung→Warning.`;
+
+function getApiKey(){return store.get('clp_apikey')||'';}
+
+async function callClaudeAI(b64){
+  const key=getApiKey();
+  if(!key)throw new Error('No API key saved');
+  const body={model:'claude-sonnet-4-6',max_tokens:800,
+    messages:[{role:'user',content:[
+      {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
+      {type:'text',text:SDS_PROMPT}
+    ]}]};
+  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify(body)});
+  if(!res.ok){const e=await res.text();throw new Error('API '+res.status+': '+e.slice(0,140));}
+  const j=await res.json();
+  const raw=j.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+  return JSON.parse(raw.replace(/```json|```/g,'').trim());
+}
+
+function setProgress(pct,text){
+  const bar=$('#sdsBarFill'),prog=$('#sdsProgress'),lbl=$('#sdsProgressText');
+  prog.classList.remove('hidden');bar.style.width=pct+'%';lbl.textContent=text;
+}
+function hideProgress(){setTimeout(()=>{$('#sdsProgress').classList.add('hidden');$('#sdsBarFill').style.width='0%';},1200);}
+
+function applyExtracted(name,cas,haz,notes){
+  if(name)$('#mName').value=name;
+  if(cas)$('#mCas').value=cas;
+  editHaz=haz;renderHazEdit();
+  return haz;
+}
+
+function showSdsResult(haz,notes,method){
+  const st=$('#sdsStatus');
+  if(haz.length){
+    st.className='fetchstatus ok';
+    st.textContent=`[${method}] Extracted: ${haz.map(h=>h.h).join(', ')}${notes?' · '+notes:''}. Review and save.`;
+  } else {
+    st.className='fetchstatus';
+    st.textContent=`[${method}] No H-codes found. The PDF may be image-only (try ⚡ AI mode) or the substance is CLP-free. Add hazards manually.`;
+  }
+}
+
+async function extractSDS(file){
+  const st=$('#sdsStatus');st.className='fetchstatus wait';st.textContent='';
+  const hasKey=!!getApiKey();
+  try{
+    if(hasKey){
+      setProgress(10,'Reading PDF…');
+      const b64=bufToBase64(await file.arrayBuffer());
+      setProgress(40,'Sending to AI (~5–10 s)…');
+      const data=await callClaudeAI(b64);
+      setProgress(95,'Applying…');
+      const haz=hcodesToHazards((data.hcodes||[]).join(' ')+' '+(data.euhcodes||[]).join(' '));
+      applyExtracted(data.name,data.cas,haz,data.notes);
+      hideProgress();showSdsResult(haz,data.notes,'AI');
+    } else {
+      setProgress(10,'Loading PDF engine…');
+      const buf=await file.arrayBuffer();
+      setProgress(30,'Extracting text…');
+      const text=await pdfToText(buf);
+      setProgress(80,'Parsing H-codes…');
+      const {name,cas,haz,notes}=extractFromText(text,file.name);
+      applyExtracted(name,cas,haz,notes);
+      hideProgress();showSdsResult(haz,notes,'pdf.js');
+    }
+  }catch(e){
+    hideProgress();st.className='fetchstatus err';
+    st.textContent='Error: '+e.message;
+  }
+}
+
+async function fetchSdsFromUrl(url){
+  const st=$('#sdsStatus');st.className='fetchstatus wait';st.textContent='';
+  try{
+    setProgress(5,'Fetching PDF…');
+    let res;
+    try{res=await fetch(url);}catch(e){res=await fetch('https://corsproxy.io/?'+encodeURIComponent(url));}
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const ct=res.headers.get('content-type')||'';
+    if(!ct.includes('pdf')&&!url.toLowerCase().endsWith('.pdf'))
+      throw new Error('Response is not a PDF');
+    const buf=await res.arrayBuffer();
+    const fname=url.split('/').pop().split('?')[0]||'SDS';
+    if(!$('#mMsds').value)$('#mMsds').value=url;
+    const hasKey=!!getApiKey();
+    if(hasKey){
+      setProgress(40,'Sending to AI…');
+      const data=await callClaudeAI(bufToBase64(buf));
+      const haz=hcodesToHazards((data.hcodes||[]).join(' ')+' '+(data.euhcodes||[]).join(' '));
+      applyExtracted(data.name,data.cas,haz,data.notes);
+      hideProgress();showSdsResult(haz,data.notes,'AI');
+    } else {
+      setProgress(50,'Extracting text…');
+      const text=await pdfToText(buf);
+      setProgress(85,'Parsing…');
+      const {name,cas,haz,notes}=extractFromText(text,fname);
+      applyExtracted(name,cas,haz,notes);
+      hideProgress();showSdsResult(haz,notes,'pdf.js');
+    }
+  }catch(e){
+    hideProgress();st.className='fetchstatus err';
+    st.textContent='Could not load: '+e.message+'. SharePoint/OneDrive links need authentication — download and upload above.';
+  }
+}
+
+/* ===================== WEB LOOKUP (Robust Multi-Source) ===================== */
+function resetWebSources(){
+  ['AI','PubChem'].forEach(s=>{
+    const el=$(`#src${s}Status`);
+    el.className='src-status wait';el.textContent='Ready';
+  });
+}
+
+async function lookupViaAI(q, st){
+  const key=getApiKey();
+  if(!key) throw Object.assign(new Error('no_key'),{tier:'nokey'});
+  st.textContent='Querying AI…';
+  const PROMPT=`Find the official CLP/GHS hazard classification for: "${q}"
+Sources to use: ECHA C&L Inventory, CLP Regulation (EC) 1272/2008 Annex VI, PubChem GHS classification, reliable supplier SDS.
+Return ONLY valid JSON, no markdown, no explanation:
+{"name":"full substance name","cas":"CAS or empty","hcodes":["H302","H315"],"euhcodes":["EUH380"],"signal":"Danger or Warning or empty","notes":"M=10 or ATE=500 if stated, else empty","confidence":"high or medium or low"}
+Rules: H-codes exactly as H+3 digits. EUH+3 digits. Include new 2026 hazard classes (EUH380-451) if applicable.`;
+  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,messages:[{role:'user',content:PROMPT}]})});
+  if(!res.ok) throw new Error('API '+res.status+': '+(await res.text()).slice(0,80));
+  const j=await res.json();
+  const raw=j.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+  return JSON.parse(raw.replace(/```json[\s\S]*?```|```/g,'').trim());
+}
+
+/* PubChem with multiple proxy fallbacks */
+async function tryFetch(url){
+  // Direct fetch (works if hosted on HTTPS)
+  try{const r=await fetch(url,{headers:{Accept:'application/json,*/*'}});if(r.ok)return{r,via:'direct'};}catch(e){}
+  // corsproxy.io
+  try{const r=await fetch('https://corsproxy.io/?'+encodeURIComponent(url));if(r.ok)return{r,via:'corsproxy.io'};}catch(e){}
+  // allorigins
+  try{
+    const r=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url));
+    if(r.ok){const j=await r.json();if(j.contents)return{r:new Response(j.contents,{status:200,headers:{'Content-Type':'application/json'}}),via:'allorigins'};}
+  }catch(e){}
+  // thingproxy
+  try{const r=await fetch('https://thingproxy.freeboard.io/fetch/'+url);if(r.ok)return{r,via:'thingproxy'};}catch(e){}
+  return null;
+}
+
+async function lookupViaPubChem(q, st){
+  const isCAS=/^\d{2,7}-\d{2}-\d$/.test(q);
+  const base='https://pubchem.ncbi.nlm.nih.gov/rest/pug';
+  const cidUrl=isCAS?`${base}/compound/xref/RN/${encodeURIComponent(q)}/cids/JSON`:`${base}/compound/name/${encodeURIComponent(q)}/cids/JSON`;
+  st.textContent='Searching…';
+  const t1=await tryFetch(cidUrl);
+  if(!t1) throw Object.assign(new Error('All CORS proxies failed'),{tier:'cors'});
+  const j=await t1.r.json();
+  const cid=j?.IdentifierList?.CID?.[0];
+  if(!cid) throw Object.assign(new Error(`"${q}" not found`),{tier:'notfound'});
+  st.textContent=`Found CID ${cid}`;
+  const viewUrl=`${base}/pug_view/data/compound/${cid}/JSON?heading=GHS+Classification`;
+  const t2=await tryFetch(viewUrl);
+  if(!t2) throw Object.assign(new Error('Could not fetch GHS data'),{tier:'cors'});
+  const txt=await t2.r.text();
+  const haz=hcodesToHazards(txt);
+  let name=q;
+  try{const vj=JSON.parse(txt);if(vj?.Record?.RecordTitle)name=vj.Record.RecordTitle;}catch(e){}
+  return {name,cas:isCAS?q:'',haz,cid,via:t1.via};
+}
+
+async function lookupWeb(q){
+  const st=$('#webStatus'), manual=$('#webManual');
+  const qTrim=q.trim();
+  st.className='fetchstatus wait'; st.textContent='Searching…'; manual.classList.add('hidden');
+  resetWebSources();
+  
+  const enc=encodeURIComponent(qTrim);
+  $('#openPubChem').onclick=()=>window.open(`https://pubchem.ncbi.nlm.nih.gov/#query=${enc}`,'_blank');
+  $('#openECHA').onclick=()=>window.open(`https://echa.europa.eu/information-on-chemicals/cl-inventory-database/-/discli/substance-search?term=${enc}`,'_blank');
+  $('#openGESTIS').onclick=()=>window.open(`https://gestis.dguv.de/search?lang=en&searchTerm=${enc}`,'_blank');
+
+  // Try AI first (most reliable, no CORS)
+  let aiSuccess=null, pubchemSuccess=null;
+
+  if(getApiKey()){
+    $('#srcAIStatus').textContent='Querying…';
+    try{
+      const data=await lookupViaAI(qTrim,$('#srcAIStatus'));
+      const haz=hcodesToHazards((data.hcodes||[]).join(' ')+' '+(data.euhcodes||[]).join(' '));
+      $('#srcAIStatus').textContent='Found';$('#srcAIStatus').className='src-status ok';
+      aiSuccess={data,haz};
+    }catch(e){
+      $('#srcAIStatus').textContent=e.tier==='nokey'?'No key':'Failed';
+      $('#srcAIStatus').className='src-status err';
+    }
+  } else {
+    $('#srcAIStatus').textContent='No key saved';
+    $('#srcAIStatus').className='src-status err';
+  }
+
+  // Try PubChem (CORS-dependent)
+  $('#srcPubChemStatus').textContent='Querying…';
+  try{
+    const d=await lookupViaPubChem(qTrim,$('#srcPubChemStatus'));
+    $('#srcPubChemStatus').textContent='Found';$('#srcPubChemStatus').className='src-status ok';
+    pubchemSuccess={data:d,haz:d.haz};
+  }catch(e){
+    $('#srcPubChemStatus').textContent=e.tier==='notfound'?'Not found':'Failed (CORS)';
+    $('#srcPubChemStatus').className='src-status err';
+  }
+
+  // Use best result: AI preferred, then PubChem
+  const success=aiSuccess||pubchemSuccess;
+  if(success){
+    const d=success.data;
+    if(d.name)$('#mName').value=d.name;
+    if(d.cas)$('#mCas').value=d.cas;
+    if(d.cid)$('#mMsds').value=`https://pubchem.ncbi.nlm.nih.gov/compound/${d.cid}`;
+    editHaz=success.haz;renderHazEdit();
+    const source=aiSuccess?'AI':'PubChem';
+    const warn=d.confidence==='low'?' ⚠ Low confidence — verify against supplier SDS.':'';
+    if(success.haz.length){
+      st.className='fetchstatus ok';
+      st.textContent=`${source}: ${success.haz.map(h=>h.h).join(', ')}${d.notes?' · '+d.notes:''}${warn}. Review and save.`;
+    } else {
+      st.className='fetchstatus';
+      st.textContent=`${source} found no CLP classification${warn}. Substance may be CLP-free or unknown — add hazards manually.`;
+    }
+    return;
+  }
+
+  // No success — show helpful fallback
+  st.className='fetchstatus err';
+  if(!getApiKey()){
+    st.textContent='No API key saved and CORS proxies blocked. Add an API key for instant, reliable lookups from any browser.';
+    $('#apiKeyBanner').classList.remove('hidden');
+  } else {
+    st.textContent='All sources failed. Use the database links below:';
+  }
+  manual.classList.remove('hidden');
+}
+
+/* ===================== EVENTS ===================== */
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2100);}
+
+$('#addBtn').onclick=()=>{
+  const id=$('#ingSelect').value,pct=parseFloat($('#ingPct').value);
+  if(!id){toast('Pick an ingredient first');return;}
+  if(!(pct>0)){toast('Enter a concentration');return;}
+  const ex=FORMULA.find(f=>f.id===id);
+  if(ex)ex.pct=pct;else FORMULA.push({id,pct});
+  $('#ingPct').value='';$('#ingSelect').value='';
+  saveFormula();renderFormula();
+};
+
+$('#ingPct').addEventListener('keydown',e=>{if(e.key==='Enter')$('#addBtn').click();});
+$('#flist').addEventListener('input',e=>{
+  const i=e.target.dataset.i;
+  if(i!=null){FORMULA[+i].pct=parseFloat(e.target.value)||0;saveFormula();const total=FORMULA.reduce((a,f)=>a+(+f.pct||0),0);const tEl=$('#ftotal');tEl.textContent=total.toFixed(2)+' %';tEl.className='v'+(total>100.001?' over':'');runClassify();}
+});
+$('#flist').addEventListener('click',e=>{
+  const i=e.target.dataset.rm;
+  if(i!=null){FORMULA.splice(+i,1);saveFormula();renderFormula();}
+});
+
+$('#tab-classify').onclick=()=>switchTab('classify');
+$('#tab-library').onclick=()=>switchTab('library');
+function switchTab(t){
+  $('#tab-classify').setAttribute('aria-selected',t==='classify');
+  $('#tab-library').setAttribute('aria-selected',t==='library');
+  $('#view-classify').classList.toggle('hidden',t!=='classify');
+  $('#view-library').classList.toggle('hidden',t!=='library');
+  if(t==='library')renderLib();
+}
+
+$('#showDeriv').addEventListener('change',runClassify);
+$('#libSearch').addEventListener('input',renderLib);
+$('#newManual').onclick=()=>openModal(null,'manual');
+$('#newSDS').onclick=()=>openModal(null,'sds');
+$('#newWeb').onclick=()=>openModal(null,'web');
+
+$('#libBody').addEventListener('click',e=>{
+  const ed=e.target.dataset.edit,dl=e.target.dataset.del;
+  if(ed)openModal(ed,'manual');
+  if(dl){
+    const ing=LIB.find(l=>l.id===dl);
+    if(confirm(`Delete "${ing.name}" from the library?`)){
+      LIB=LIB.filter(l=>l.id!==dl);
+      FORMULA=FORMULA.filter(f=>f.id!==dl);
+      saveLib();saveFormula();renderLib();fillSelect();renderFormula();
+    }
+  }
+});
+
+$('#mHazAdd').onclick=()=>{
+  const idx=$('#mHazSelect').value;
+  if(idx==='')return;
+  editHaz.push({...PRESETS[+idx][1]});
+  renderHazEdit();
+};
+
+$('#mHaz').addEventListener('click',e=>{
+  const i=e.target.dataset.hz;
+  if(i!=null){editHaz.splice(+i,1);renderHazEdit();}
+});
+
+$('#mCancel').onclick=closeModal;
+$('#scrim').addEventListener('click',e=>{if(e.target===$('#scrim'))closeModal();});
+
+$('#mActive').addEventListener('change',e=>{
+  $('#mActiveCustom').classList.toggle('hidden',e.target.value!=='custom');
+});
+
+$('#bannerAddKey').onclick=()=>{
+  $('#sdsTabAI').click();
+  $('#aiKey').focus();
+};
+
+$('#mSave').onclick=()=>{
+  const name=$('#mName').value.trim();
+  if(!name){toast('Name is required');return;}
+  let active=parseFloat($('#mActive').value);
+  if($('#mActive').value==='custom')active=parseFloat($('#mActiveVal').value)||1;
+  const obj={
+    name,
+    cas:$('#mCas').value.trim(),
+    msds:$('#mMsds').value.trim(),
+    allergen:$('#mAllergen').value,
+    active:active!==1?active:undefined,
+    hazards:editHaz.map(h=>({...h}))
+  };
+  if(editId){Object.assign(LIB.find(l=>l.id===editId),obj);}
+  else{LIB.push({id:'u'+Date.now(),...obj});}
+  saveLib();renderLib();fillSelect();renderFormula();closeModal();toast('Ingredient saved');
+};
+
+/* SDS tabs */
+function switchSdsTab(t){
+  ['File','Url','AI'].forEach(n=>{
+    $('#sdsTab'+n).classList.toggle('active',n===t);
+    $('#sds'+n+'Panel').classList.toggle('hidden',n!==t);
+  });
+}
+$('#sdsTabFile').onclick=()=>switchSdsTab('File');
+$('#sdsTabUrl').onclick=()=>switchSdsTab('Url');
+$('#sdsTabAI').onclick=()=>{
+  switchSdsTab('AI');
+  const k=getApiKey();
+  $('#aiKey').value=k?'••••••••••••'+k.slice(-4):'';
+  $('#aiKeyStatus').textContent=k?'Key saved ('+k.slice(0,7)+'…). AI mode active.':'No key saved. AI mode off — pdf.js used instead.';
+  $('#aiKeyStatus').className='fetchstatus'+(k?' ok':'');
+};
+$('#aiKeySave').onclick=()=>{
+  const v=$('#aiKey').value.trim();
+  if(!v||v.startsWith('•')){$('#aiKeyStatus').textContent='Enter a new key first.';return;}
+  if(!v.startsWith('sk-')){$('#aiKeyStatus').textContent='Key should start with sk-…';$('#aiKeyStatus').className='fetchstatus err';return;}
+  store.set('clp_apikey',v);
+  $('#aiKeyStatus').textContent='Saved. AI mode active.';$('#aiKeyStatus').className='fetchstatus ok';
+  $('#sdsTabAI').textContent='⚡ AI mode ✓';
+};
+$('#aiKeyClear').onclick=()=>{
+  store.set('clp_apikey','');
+  $('#aiKey').value='';
+  $('#aiKeyStatus').textContent='Key cleared. Using pdf.js.';
+  $('#aiKeyStatus').className='fetchstatus';
+  $('#sdsTabAI').textContent='⚡ AI mode';
+};
+
+/* SDS file + dropzone */
+$('#dropzone').onclick=()=>$('#sdsFile').click();
+$('#sdsFile').addEventListener('change',e=>{if(e.target.files[0])extractSDS(e.target.files[0]);});
+['dragover','dragenter'].forEach(ev=>$('#dropzone').addEventListener(ev,e=>{e.preventDefault();$('#dropzone').classList.add('over');}));
+['dragleave','drop'].forEach(ev=>$('#dropzone').addEventListener(ev,e=>{e.preventDefault();$('#dropzone').classList.remove('over');}));
+$('#dropzone').addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)extractSDS(f);});
+
+/* SDS URL */
+$('#sdsUrlGo').onclick=()=>{const u=$('#sdsUrl').value.trim();if(u)fetchSdsFromUrl(u);};
+$('#sdsUrl').addEventListener('keydown',e=>{if(e.key==='Enter')$('#sdsUrlGo').click();});
+
+/* web */
+$('#webGo').onclick=()=>{const q=$('#webQuery').value.trim();if(q)lookupWeb(q);};
+$('#webQuery').addEventListener('keydown',e=>{if(e.key==='Enter')$('#webGo').click();});
+
+/* import/export */
+$('#exportBtn').onclick=()=>{
+  const blob=new Blob([JSON.stringify(LIB,null,1)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='clp-ingredient-library-2026.json';a.click();
+};
+$('#importBtn').onclick=()=>$('#importFile').click();
+$('#importFile').addEventListener('change',e=>{
+  const file=e.target.files[0];if(!file)return;
+  const fr=new FileReader();
+  fr.onload=()=>{
+    try{
+      const data=JSON.parse(fr.result);
+      if(!Array.isArray(data))throw 0;
+      let n=0;
+      data.forEach(d=>{
+        if(!d.name)return;
+        const ex=LIB.find(l=>l.name.toLowerCase()===d.name.toLowerCase());
+        const o={
+          id:ex?ex.id:'i'+Date.now()+Math.random().toString(36).slice(2,6),
+          name:d.name,
+          cas:d.cas||'',
+          msds:d.msds||'',
+          allergen:d.allergen||'',
+          notes:d.notes||'',
+          active:d.active,
+          hazards:(d.hazards||[]).map(h=>({...h}))
+        };
+        if(ex)Object.assign(ex,o);else LIB.push(o);n++;
+      });
+      saveLib();renderLib();fillSelect();renderFormula();toast(n+' ingredients imported');
+    }catch(err){toast('Could not read that file — expected a JSON array');}
+    $('#importFile').value='';
+  };
+  fr.readAsText(file);
+});
+
+/* Init */
+loadLib();loadFormula();saveLib();fillSelect();renderFormula();
+</script>
+</body>
+</html>
